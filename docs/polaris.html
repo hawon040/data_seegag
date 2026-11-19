@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Polaris — 기후와 과수 재배지의 이동</title>
+<meta name="description" content="1985–2025 시도별 과실 재배면적으로 본 우리나라 과수 재배지의 변화">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Noto+Sans+KR:wght@300;400;500;700;900&family=Space+Grotesk:wght@400;500;700&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{--bg:#0A0B0D;--panel:#101215;--line:#2A2C30;--fg:#F2F0EA;--mut:#A3A39E;--ac:#9BE7FF;--ac2:#4C9DB5}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:'Noto Sans KR','Space Grotesk',sans-serif;line-height:1.7}
+a{color:inherit;text-decoration:none}
+.pl{font-family:'Dancing Script',cursive;font-weight:700;letter-spacing:0}
+.wrap{max-width:1160px;margin:0 auto;padding:0 24px}
+header{position:sticky;top:0;z-index:10;background:rgba(10,11,13,.88);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:64px;flex-wrap:wrap}
+.logo{font-size:30px;color:var(--fg);display:flex;align-items:center;gap:8px}
+nav{display:flex;gap:28px;flex-wrap:wrap;font-size:15px;color:#C9C8C2}
+nav a:hover,nav a.on{color:var(--ac)}
+.hero{padding:96px 0 72px;border-bottom:1px solid var(--line);background:radial-gradient(circle at 80% 20%,#17303A 0,transparent 55%)}
+.eyebrow{font-family:'Space Grotesk';letter-spacing:.18em;font-size:12px;color:var(--ac);text-transform:uppercase;margin:0 0 16px}
+.hero h1{margin:0;font-size:clamp(64px,11vw,128px);line-height:1;color:var(--fg)}
+.hero p.lead{font-size:clamp(17px,2vw,21px);color:#C9C8C2;max-width:620px;margin:20px 0 32px}
+.btn{display:inline-block;border:1px solid var(--fg);border-radius:999px;padding:11px 26px;font-weight:500;font-size:15px}
+.btn:hover{background:var(--ac);border-color:var(--ac);color:#0A0B0D}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));border-bottom:1px solid var(--line)}
+.stat{padding:36px 24px;border-right:1px solid var(--line)}
+.stat b{display:block;font-family:'Space Grotesk';font-size:clamp(40px,5vw,56px);line-height:1;letter-spacing:-.03em}
+.stat b i{font-style:normal;font-size:.42em;color:var(--ac);margin-left:4px}
+.stat span{display:block;margin-top:10px;font-size:13px;color:var(--mut)}
+section.pg{padding:84px 0;border-bottom:1px solid var(--line)}
+h2.t{font-size:clamp(30px,4vw,44px);margin:0 0 8px;letter-spacing:-.03em;line-height:1.2}
+.sub{color:var(--mut);max-width:680px;margin:0 0 36px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:24px;margin-bottom:28px}
+.card .no{font-family:'Space Grotesk';color:var(--ac);font-size:13px;letter-spacing:.1em}
+.card h3{margin:4px 0 12px;font-size:22px;letter-spacing:-.02em}
+.grid2{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:28px;align-items:start}
+@media(max-width:860px){.grid2{grid-template-columns:1fr}}
+.box{position:relative;height:340px}
+.exp{border-left:2px solid var(--line);padding-left:16px;color:#C9C8C2;font-size:15px}
+.exp b{color:var(--fg);display:block;margin-bottom:4px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.chip{background:none;border:1px solid #3A3C40;color:var(--mut);border-radius:999px;padding:8px 16px;font:inherit;font-size:14px;cursor:pointer;min-height:40px}
+.chip.on{border-color:var(--ac);color:var(--ac)}
+.hm{display:grid;gap:2px;font-size:12px;font-family:'Space Grotesk'}
+.hm div{padding:8px 6px;text-align:center;border-radius:3px}
+.hm .h{color:var(--mut);background:none}
+.hm .r{text-align:left;color:#C9C8C2;background:none}
+.todo{border:1px dashed #3A3C40;border-radius:12px;padding:20px;color:var(--mut);font-size:14px}
+.todo b{color:var(--fg)}
+.todos{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
+.warn{background:#1B1710;border:1px solid #4a3d1c;color:#E6D3A3;border-radius:10px;padding:14px 18px;font-size:14px;margin-bottom:28px}
+footer{padding:48px 0;color:var(--mut);font-size:13px}
+footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between}
+
+.hero{padding:0;border-bottom:1px solid var(--line);background:none}
+.heroin{position:relative;min-height:calc(100vh - 64px);min-height:calc(100svh - 64px);overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;padding:0 clamp(20px,3vw,40px) 40px}
+.heroin .bg{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+.wm{position:relative;z-index:1;font-size:clamp(96px,23vw,360px);line-height:1;margin:-.02em 0 0 -.02em;color:#F2F0EA;white-space:nowrap}
+.herobot{position:relative;z-index:1;max-width:520px}
+.herobot .tag{font-size:clamp(22px,2.6vw,30px);line-height:1.3;margin:0 0 10px;font-weight:500;letter-spacing:-.02em}
+.herobot .tag2{margin:0 0 24px;color:#C9C8C2;font-size:16px}
+.acts{display:flex;gap:10px;flex-wrap:wrap}
+.btn.solid{background:var(--fg);color:#0A0B0D}
+.btn.solid:hover{background:var(--ac)}
+.trust{border-bottom:1px solid var(--line)}
+.trust .wrap{display:flex;gap:24px;align-items:center;flex-wrap:wrap;padding-top:22px;padding-bottom:22px;font-size:14px;color:var(--mut)}
+.srcs{display:flex;gap:28px;flex-wrap:wrap}.srcs b{font-weight:500;color:#C9C8C2;font-family:'Space Grotesk','Noto Sans KR'}
+.intro{padding:96px 0 72px;border-bottom:1px solid var(--line)}
+.intro h2{margin:0;max-width:980px;font-size:clamp(26px,3.6vw,44px);line-height:1.3;font-weight:500;letter-spacing:-.03em}
+
+#mapsvg path{stroke:#0A0B0D;stroke-width:.25;cursor:pointer;transition:fill .35s}
+#mapsvg path:hover,#mapsvg path.sel{stroke:#F2F0EA;stroke-width:.6}
+.slw{margin-top:14px}.slw input{width:100%;accent-color:#9BE7FF;height:36px}
+.yrl{display:flex;justify-content:space-between;font-family:'Space Grotesk';font-size:12px;color:var(--mut)}
+.yrl .f{color:#E6D3A3}.yrl .on{color:var(--ac);font-weight:700}
+.mleg{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--mut)}
+.mleg .bar{height:10px;border-radius:5px;background:linear-gradient(90deg,#16262C,#9BE7FF)}
+.mleg .lb{display:flex;justify-content:space-between}
+.mtip{margin-top:16px;padding:14px 16px;border:1px solid var(--line);border-radius:10px;font-size:14px;min-height:76px}
+.badge{display:inline-block;background:#3a3017;color:#E6D3A3;border-radius:999px;padding:2px 10px;font-size:12px;margin-left:8px}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+<a class="logo pl" href="#top"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24"><polygon points="12,0 15,9 24,12 15,15 12,24 9,15 0,12 9,9" fill="#9BE7FF"/></svg>Polaris</a>
+<nav id="nav"><a href="#past">과거</a><a href="#map">지도</a><a href="#analysis">분석</a><a href="#future">미래</a><a href="#about">자료</a></nav>
+</div></header>
+
+<main id="top">
+<section class="hero"><div class="heroin">
+<svg class="bg" aria-hidden="true" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+<defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0E2630"/><stop offset=".6" stop-color="#1A3B45"/><stop offset="1" stop-color="#0A0B0D"/></linearGradient></defs>
+<rect width="1440" height="900" fill="url(#sky)"/>
+<g fill="none" stroke="#9BE7FF" stroke-opacity=".16"><path d="M-40 640 C240 560 420 700 720 620 S1180 560 1480 640"/><path d="M-40 690 C240 610 420 750 720 670 S1180 610 1480 690"/><path d="M-40 740 C240 660 420 800 720 720 S1180 660 1480 740"/><path d="M-40 790 C240 710 420 850 720 770 S1180 710 1480 790"/></g>
+<g fill="none" stroke="#9BE7FF" stroke-opacity=".35"><polyline points="900,250 1010,190 1110,240 1210,160 1330,205"/><polyline points="1010,190 980,330 1110,240"/></g>
+<g fill="#9BE7FF"><circle cx="900" cy="250" r="3"/><circle cx="1010" cy="190" r="4"/><circle cx="1110" cy="240" r="3"/><circle cx="1210" cy="160" r="3"/><circle cx="1330" cy="205" r="2"/><circle cx="980" cy="330" r="3"/></g>
+<polygon points="1210,100 1219,150 1270,160 1219,170 1210,220 1201,170 1150,160 1201,150" fill="#fff" fill-opacity=".9" transform="translate(0,-15)"/>
+</svg>
+<div class="wm pl">Polaris</div>
+<div class="herobot">
+<p class="eyebrow" style="color:#C9C8C2">기후 × 과수 · 대한민국</p>
+<p class="tag">기후가 바뀌면 과수는<br>어디로 옮겨 가야 할까.</p>
+<p class="tag2">40년의 재배면적으로 보는 재배지의 이동.</p>
+<div class="acts"><a class="btn solid" href="#past">그래프 보기</a><a class="btn" href="#about">자료와 방법</a></div>
+</div></div></section>
+<div class="trust"><div class="wrap"><span>데이터 출처</span><span class="srcs"><b>KOSIS</b><b>농작물생산조사</b><b>공공데이터포털</b><b>과수재배변동정보</b><b>SSP 시나리오</b></span></div></div>
+<section class="intro"><div class="wrap"><h2>시도별 통계 40년치로, 과수 재배지가 어디서 늘고 어디서 줄었는지 한눈에 보여드립니다.</h2></div></section>
+<div class="stats wrap" id="stats" style="padding:0;border-left:0"></div>
+
+<section class="pg" id="past"><div class="wrap">
+<p class="eyebrow">01 · Past</p>
+<h2 class="t">재배지는 이미 움직였다</h2>
+<p class="sub">1985–2025년 5개 조사 시점의 시도별 과실 재배면적(ha).</p>
+<div class="chips" id="chips" role="group" aria-label="작물 선택"></div>
+
+<div class="card"><span class="no">GRAPH 01 · 선 그래프</span><h3>지역별 재배면적 추이</h3>
+<div class="grid2"><div class="box"><canvas id="c1" role="img" aria-label="지역별 재배면적 추이"></canvas></div>
+<div class="exp"><b>그래프 설명</b><span id="e1"></span></div></div></div>
+
+<div class="card"><span class="no">GRAPH 02 · 막대 그래프</span><h3>비중이 커진 지역과 줄어든 지역</h3>
+<div class="grid2"><div class="box"><canvas id="c2" role="img" aria-label="1985년과 2025년 지역별 비중 비교"></canvas></div>
+<div class="exp"><b>그래프 설명</b><span id="e2"></span></div></div></div>
+
+<div class="card"><span class="no">GRAPH 03 · 누적 막대</span><h3>시도별 비중의 변화</h3>
+<div class="grid2"><div class="box"><canvas id="c3" role="img" aria-label="시도별 비중 누적 막대"></canvas></div>
+<div class="exp"><b>그래프 설명</b><span id="e3"></span></div></div></div>
+
+<div class="card"><span class="no">GRAPH 04 · 선 그래프</span><h3>재배 중심 위도의 이동</h3>
+<div class="grid2"><div class="box"><canvas id="c4" role="img" aria-label="면적 가중 평균 위도 추이"></canvas></div>
+<div class="exp"><b>그래프 설명</b><span id="e4"></span></div></div></div>
+</div></section>
+
+<section class="pg" id="map"><div class="wrap">
+<p class="eyebrow">Map · Trend &amp; Forecast</p>
+<h2 class="t">지도로 보는 변화와 예측</h2>
+<p class="sub">슬라이더를 움직여 1985–2025년 변화를 보고, 2035·2045·2060년 예측을 확인하세요. 예측은 지난 변화 추세를 이어 그린 외삽이며 기후 모델 예측이 아닙니다.</p>
+<div class="chips" id="mchips" role="group" aria-label="지도 작물 선택"></div>
+<div class="card"><span class="no">GRAPH 10 · 지도</span><h3 id="mtitle"></h3>
+<div class="grid2"><div>
+<svg id="mapsvg" viewBox="0 0 92 100" role="img" aria-label="시도별 과수 재배 비중 지도" style="width:100%;max-height:560px;background:#0C0E10;border-radius:8px"></svg>
+<div class="slw"><input id="yr" type="range" min="0" max="7" step="1" value="4" aria-label="연도"><div id="yrl" class="yrl"></div></div>
+</div>
+<div><div id="mleg" class="mleg"></div><div class="exp" style="margin-top:16px"><b>그래프 설명</b><span id="e10"></span></div><div id="mtip" class="mtip" aria-live="polite">시도를 가리키거나 눌러 보세요.</div></div></div></div>
+</div></section>
+
+<section class="pg" id="analysis"><div class="wrap">
+<p class="eyebrow">02 · Analysis</p>
+<h2 class="t">얼마나, 어디로</h2>
+<p class="sub">같은 자료로 변화의 크기와 방향을 더 자세히 봅니다.</p>
+
+<div class="card"><span class="no">GRAPH 05 · 히트맵</span><h3>지역 × 시점 재배면적 (1985 대비 %)</h3>
+<div id="hm" class="hm" style="overflow-x:auto"></div>
+<div class="exp" style="margin-top:16px"><b>그래프 설명</b><span id="e5"></span></div></div>
+
+<div class="card"><span class="no">GRAPH 06 · 산점도</span><h3>위도와 재배면적 변화</h3>
+<div class="grid2"><div class="box"><canvas id="c6" role="img" aria-label="시도 위도와 재배면적 변화율 산점도"></canvas></div>
+<div class="exp"><b>그래프 설명</b><span id="e6"></span></div></div></div>
+
+<div class="warn">시도 단위 자료라 경북 안에서 일어난 이동(예: 대구 → 청송)은 보이지 않습니다. 시군구 자료를 연결하면 아래 그래프를 채울 수 있습니다.</div>
+<div class="todos">
+<div class="todo"><b>GRAPH 07 · 박스플롯</b><br>시군구 간 편차 — 시군구 자료 연결 후</div>
+<div class="todo"><b>GRAPH 08 · 히스토그램</b><br>재배 중심 이동 거리 분포 — 시군구 자료 연결 후</div>
+</div>
+</div></section>
+
+<section class="pg" id="future"><div class="wrap">
+<p class="eyebrow">03 · Future</p>
+<h2 class="t">앞으로의 방향</h2>
+<p class="sub">SSP 시나리오별 2030–2040년대 재배 적합 지역. 기후 전망 자료를 연결하는 단계입니다.</p>
+<div class="todos">
+<div class="todo"><b>GRAPH 09 · 도넛</b><br>시나리오별 적합 지역 구성비 — 전망 자료 연결 후</div>
+<div class="todo"><b>GRAPH 10 · 지도 (기후 시나리오판)</b><br>위 지도의 예측 구간은 추세 외삽입니다. SSP 기후 전망과 시군구 자료를 연결하면 적합 지역 지도로 교체합니다.</div>
+</div>
+</div></section>
+
+<section class="pg" id="about"><div class="wrap">
+<p class="eyebrow">04 · Data</p>
+<h2 class="t">자료와 방법</h2>
+<div class="card"><b>KOSIS 농작물생산조사</b><br><span style="color:var(--mut)">과실 재배면적, 시도별, 1985·1995·2005·2015·2025년. 전국 합계는 제외하고 시도를 합산해 비중을 계산했습니다.</span></div>
+<div class="card"><b>재배 중심 위도</b><br><span style="color:var(--mut)">시도 대표 위도를 재배면적으로 가중평균한 값입니다. 시도 위도는 근사값이라 방향을 보는 용도입니다.</span></div>
+<div class="card"><b>공공데이터포털 과수재배변동정보</b><br><span style="color:var(--mut)">시군구 재배면적 자료. 인증키 발급 후 연결 예정입니다.</span></div>
+</div></section>
+</main>
+
+<footer><div class="wrap"><span><span class="pl" style="font-size:20px;color:var(--fg)">Polaris</span> · 백석대학교 빅데이터학과 데이터시각화 과제</span><span>출처: KOSIS 농작물생산조사</span></div></footer>
+
+<script>
+const D = {"years": [1985, 1995, 2005, 2015, 2025], "regions": ["강원특별자치도", "경기도", "경상남도", "경상북도", "광주광역시", "대구광역시", "대전광역시", "부산광역시", "서울특별시", "세종특별자치시", "울산광역시", "인천광역시", "전라남도", "전북특별자치도", "제주특별자치도", "충청남도", "충청북도"], "crops": ["사과", "배", "복숭아", "포도", "감귤", "감", "단감", "떫은감", "자두", "기타", "매실"], "area": {"사과": {"강원특별자치도": [868.0, 464.0, 144.0, 721.0, 1953.0], "경기도": [2248.0, 1785.0, 312.0, 330.0, 465.0], "경상남도": [1340.0, 1965.0, 2506.0, 3444.0, 3757.0], "경상북도": [22541.0, 34322.0, 16774.0, 19247.0, 19102.0], "광주광역시": [null, 0.0, 0.0, 0.0, 4.0], "대구광역시": [483.0, 448.0, 78.0, 66.0, 375.0], "대전광역시": [null, 58.0, 15.0, 4.0, 20.0], "부산광역시": [null, 0.0, 0.0, 1.0, 7.0], "서울특별시": [30.0, 0.0, 0.0, 0.0, 0.0], "세종특별자치시": [null, null, null, 0.0, 15.0], "울산광역시": [null, null, 18.0, 4.0, 41.0], "인천광역시": [5.0, 5.0, 14.0, 24.0, 25.0], "전라남도": [544.0, 200.0, 276.0, 289.0, 210.0], "전북특별자치도": [1407.0, 910.0, 933.0, 2223.0, 2236.0], "제주특별자치도": [null, 0.0, 0.0, 0.0, 0.0], "충청남도": [3665.0, 4727.0, 2053.0, 1283.0, 1391.0], "충청북도": [4567.0, 5219.0, 3784.0, 3984.0, 3611.0]}, "배": {"강원특별자치도": [236.0, 289.0, 516.0, 134.0, 115.0], "경기도": [2958.0, 3043.0, 3982.0, 2426.0, 1363.0], "경상남도": [1579.0, 1740.0, 1465.0, 835.0, 470.0], "경상북도": [386.0, 2223.0, 3515.0, 1422.0, 969.0], "광주광역시": [null, 34.0, 90.0, 43.0, 24.0], "대구광역시": [17.0, 18.0, 30.0, 3.0, 11.0], "대전광역시": [null, 322.0, 261.0, 73.0, 41.0], "부산광역시": [98.0, 63.0, 23.0, 12.0, 20.0], "서울특별시": [64.0, 47.0, 54.0, 24.0, 5.0], "세종특별자치시": [null, null, null, null, 74.0], "울산광역시": [null, null, 1264.0, 567.0, 399.0], "인천광역시": [32.0, 52.0, 149.0, 164.0, 31.0], "전라남도": [1186.0, 3195.0, 3999.0, 3499.0, 2735.0], "전북특별자치도": [365.0, 835.0, 1031.0, 618.0, 860.0], "제주특별자치도": [null, 0.0, 15.0, 8.0, 0.0], "충청남도": [1809.0, 3035.0, 3940.0, 2334.0, 2037.0], "충청북도": [292.0, 856.0, 1401.0, 502.0, 162.0]}, "복숭아": {"강원특별자치도": [542.0, 361.0, 785.0, 596.0, 776.0], "경기도": [1104.0, 492.0, 1366.0, 912.0, 977.0], "경상남도": [1520.0, 778.0, 383.0, 371.0, 552.0], "경상북도": [4269.0, 5162.0, 6357.0, 8412.0, 10205.0], "광주광역시": [null, 6.0, 21.0, 26.0, 32.0], "대구광역시": [250.0, 241.0, 292.0, 234.0, 439.0], "대전광역시": [null, 70.0, 62.0, 17.0, 51.0], "부산광역시": [2.0, 0.0, 1.0, 1.0, 13.0], "서울특별시": [8.0, 7.0, 0.0, 0.0, 1.0], "세종특별자치시": [null, null, null, null, 399.0], "울산광역시": [null, null, 19.0, 7.0, 42.0], "인천광역시": [2.0, 4.0, 24.0, 19.0, 5.0], "전라남도": [798.0, 553.0, 557.0, 506.0, 959.0], "전북특별자치도": [1853.0, 507.0, 814.0, 913.0, 1210.0], "제주특별자치도": [6.0, 0.0, 17.0, 1.0, 1.0], "충청남도": [1646.0, 978.0, 1025.0, 515.0, 264.0], "충청북도": [1138.0, 1082.0, 3291.0, 4174.0, 4511.0]}, "포도": {"강원특별자치도": [231.0, 86.0, 240.0, 200.0, 233.0], "경기도": [3082.0, 2554.0, 3100.0, 2068.0, 1320.0], "경상남도": [1122.0, 1157.0, 383.0, 472.0, 403.0], "경상북도": [5717.0, 10714.0, 9926.0, 7714.0, 8110.0], "광주광역시": [null, 192.0, 100.0, 17.0, 7.0], "대구광역시": [521.0, 769.0, 535.0, 163.0, 128.0], "대전광역시": [null, 385.0, 288.0, 118.0, 109.0], "부산광역시": [2.0, 3.0, 1.0, 0.0, 4.0], "서울특별시": [15.0, 1.0, 7.0, 2.0, 0.0], "세종특별자치시": [null, null, null, null, 43.0], "울산광역시": [null, null, 14.0, 3.0, 11.0], "인천광역시": [101.0, 229.0, 181.0, 72.0, 80.0], "전라남도": [892.0, 680.0, 416.0, 281.0, 257.0], "전북특별자치도": [497.0, 1137.0, 1235.0, 931.0, 777.0], "제주특별자치도": [null, 0.0, 0.0, 0.0, 41.0], "충청남도": [2011.0, 3242.0, 2419.0, 963.0, 826.0], "충청북도": [2015.0, 4881.0, 3212.0, 2393.0, 1822.0]}, "감귤": {"강원특별자치도": [null, 0.0, 0.0, 0.0, 0.0], "경기도": [null, 0.0, 0.0, 0.0, 0.0], "경상남도": [23.0, 1.0, 0.0, 0.0, 14.0], "경상북도": [null, 0.0, 0.0, 0.0, 14.0], "광주광역시": [null, 0.0, 0.0, 0.0, 0.0], "대구광역시": [null, 0.0, 0.0, 0.0, 1.0], "대전광역시": [null, 0.0, 0.0, 0.0, 0.0], "부산광역시": [null, 0.0, 0.0, 5.0, 0.0], "서울특별시": [null, 0.0, 0.0, 0.0, 0.0], "세종특별자치시": [null, null, null, null, 0.0], "울산광역시": [null, null, 0.0, 0.0, 0.0], "인천광역시": [null, 0.0, 0.0, 0.0, 0.0], "전라남도": [7.0, 14.0, 74.0, 19.0, 158.0], "전북특별자치도": [null, 0.0, 0.0, 0.0, 17.0], "제주특별자치도": [15658.0, 24333.0, 21430.0, 21241.0, 21793.0], "충청남도": [null, 0.0, 0.0, 0.0, 12.0], "충청북도": [null, 0.0, 0.0, 0.0, 0.0]}, "감": {"강원특별자치도": [52.0, 128.0, 148.0, 266.0, 264.0], "경기도": [20.0, 78.0, 57.0, 44.0, 62.0], "경상남도": [4843.0, 10417.0, 9898.0, 9427.0, 8504.0], "경상북도": [1233.0, 4213.0, 6544.0, 7166.0, 5169.0], "광주광역시": [null, 542.0, 259.0, 320.0, 221.0], "대구광역시": [6.0, 215.0, 193.0, 174.0, 190.0], "대전광역시": [null, 44.0, 57.0, 55.0, 38.0], "부산광역시": [5.0, 89.0, 104.0, 84.0, 37.0], "서울특별시": [null, 0.0, 0.0, 1.0, 3.0], "세종특별자치시": [null, null, null, null, 16.0], "울산광역시": [null, null, 274.0, 388.0, 340.0], "인천광역시": [null, 21.0, 23.0, 36.0, 33.0], "전라남도": [2678.0, 7503.0, 6691.0, 6055.0, 4992.0], "전북특별자치도": [502.0, 979.0, 1113.0, 1515.0, 970.0], "제주특별자치도": [62.0, 169.0, 113.0, 71.0, 24.0], "충청남도": [355.0, 464.0, 460.0, 534.0, 421.0], "충청북도": [82.0, 147.0, 897.0, 898.0, 522.0]}, "단감": {"강원특별자치도": [null, null, 21.0, 25.0, 6.0], "경기도": [null, null, 11.0, 4.0, 22.0], "경상남도": [null, null, 8763.0, 7064.0, 6144.0], "경상북도": [null, null, 1790.0, 716.0, 398.0], "광주광역시": [null, null, 211.0, 162.0, 66.0], "대구광역시": [null, null, 175.0, 76.0, 3.0], "대전광역시": [null, null, 20.0, 13.0, 1.0], "부산광역시": [null, null, 100.0, 68.0, 23.0], "서울특별시": [null, null, 0.0, 0.0, 0.0], "세종특별자치시": [null, null, null, null, 2.0], "울산광역시": [null, null, 263.0, 355.0, 223.0], "인천광역시": [null, null, 3.0, 22.0, 9.0], "전라남도": [null, null, 5444.0, 3108.0, 2175.0], "전북특별자치도": [null, null, 142.0, 116.0, 129.0], "제주특별자치도": [null, null, 113.0, 71.0, 23.0], "충청남도": [null, null, 137.0, 47.0, 74.0], "충청북도": [null, null, 6.0, 2.0, 4.0]}, "떫은감": {"강원특별자치도": [null, null, 127.0, 241.0, 259.0], "경기도": [null, null, 46.0, 40.0, 40.0], "경상남도": [null, null, 1135.0, 2363.0, 2360.0], "경상북도": [null, null, 4754.0, 6450.0, 4771.0], "광주광역시": [null, null, 48.0, 158.0, 155.0], "대구광역시": [null, null, 18.0, 98.0, 188.0], "대전광역시": [null, null, 37.0, 42.0, 37.0], "부산광역시": [null, null, 4.0, 16.0, 15.0], "서울특별시": [null, null, 0.0, 1.0, 3.0], "세종특별자치시": [null, null, null, null, 13.0], "울산광역시": [null, null, 11.0, 33.0, 117.0], "인천광역시": [null, null, 20.0, 14.0, 24.0], "전라남도": [null, null, 1247.0, 2947.0, 2817.0], "전북특별자치도": [null, null, 971.0, 1399.0, 841.0], "제주특별자치도": [null, null, 0.0, 0.0, 1.0], "충청남도": [null, null, 323.0, 487.0, 347.0], "충청북도": [null, null, 891.0, 896.0, 518.0]}, "자두": {"강원특별자치도": [42.0, 42.0, 60.0, 74.0, 106.0], "경기도": [74.0, 44.0, 135.0, 60.0, 91.0], "경상남도": [138.0, 163.0, 434.0, 249.0, 360.0], "경상북도": [2869.0, 1927.0, 5183.0, 4933.0, 4331.0], "광주광역시": [null, 2.0, 9.0, 8.0, 1.0], "대구광역시": [105.0, 80.0, 192.0, 77.0, 569.0], "대전광역시": [null, 34.0, 33.0, 3.0, 12.0], "부산광역시": [null, 0.0, 1.0, 1.0, 24.0], "서울특별시": [null, 0.0, 0.0, 0.0, 0.0], "세종특별자치시": [null, null, null, null, 18.0], "울산광역시": [null, null, 2.0, 9.0, 29.0], "인천광역시": [null, 5.0, 0.0, 5.0, 1.0], "전라남도": [99.0, 85.0, 80.0, 86.0, 77.0], "전북특별자치도": [21.0, 33.0, 48.0, 48.0, 58.0], "제주특별자치도": [null, 0.0, 1.0, 0.0, 1.0], "충청남도": [148.0, 19.0, 40.0, 77.0, 49.0], "충청북도": [533.0, 259.0, 478.0, 290.0, 457.0]}, "기타": {"강원특별자치도": [47.0, 310.0, 351.0, 841.0, 1191.0], "경기도": [20.0, 361.0, 407.0, 1927.0, 1666.0], "경상남도": [1117.0, 4153.0, 4604.0, 5213.0, 3632.0], "경상북도": [798.0, 6643.0, 7088.0, 5502.0, 4098.0], "광주광역시": [null, 67.0, 125.0, 248.0, 153.0], "대구광역시": [43.0, 400.0, 270.0, 495.0, 682.0], "대전광역시": [null, 44.0, 144.0, 311.0, 154.0], "부산광역시": [10.0, 83.0, 53.0, 168.0, 186.0], "서울특별시": [2.0, 6.0, 6.0, 12.0, 23.0], "세종특별자치시": [null, null, null, null, 95.0], "울산광역시": [null, null, 118.0, 285.0, 251.0], "인천광역시": [2.0, 38.0, 111.0, 291.0, 232.0], "전라남도": [717.0, 5035.0, 3281.0, 8174.0, 4235.0], "전북특별자치도": [88.0, 623.0, 921.0, 3761.0, 2216.0], "제주특별자치도": [53.0, 989.0, 418.0, 1021.0, 784.0], "충청남도": [190.0, 739.0, 566.0, 1722.0, 2117.0], "충청북도": [41.0, 463.0, 405.0, 2369.0, 2044.0]}, "매실": {"강원특별자치도": [null, null, null, null, 98.0], "경기도": [null, null, null, null, 401.0], "경상남도": [null, null, null, null, 1056.0], "경상북도": [null, null, null, null, 257.0], "광주광역시": [null, null, null, null, 82.0], "대구광역시": [null, null, null, null, 49.0], "대전광역시": [null, null, null, null, 46.0], "부산광역시": [null, null, null, null, 72.0], "서울특별시": [null, null, null, null, 4.0], "세종특별자치시": [null, null, null, null, 13.0], "울산광역시": [null, null, null, null, 105.0], "인천광역시": [null, null, null, null, 85.0], "전라남도": [null, null, null, null, 2299.0], "전북특별자치도": [null, null, null, null, 236.0], "제주특별자치도": [null, null, null, null, 57.0], "충청남도": [null, null, null, null, 229.0], "충청북도": [null, null, null, null, 142.0]}, "합계": {"강원특별자치도": [2018.0, 1680.0, 2244.0, 2832.0, 4737.0], "경기도": [9506.0, 8357.0, 9359.0, 7767.0, 6343.0], "경상남도": [11682.0, 20374.0, 19673.0, 20011.0, 18748.0], "경상북도": [37813.0, 65204.0, 55387.0, 54396.0, 52254.0], "광주광역시": [null, 843.0, 604.0, 662.0, 524.0], "대구광역시": [1425.0, 2171.0, 1590.0, 1212.0, 2444.0], "대전광역시": [null, 957.0, 860.0, 581.0, 471.0], "부산광역시": [117.0, 238.0, 183.0, 272.0, 363.0], "서울특별시": [119.0, 61.0, 67.0, 39.0, 36.0], "세종특별자치시": [null, null, null, 0.0, 673.0], "울산광역시": [null, null, 1709.0, 1263.0, 1218.0], "인천광역시": [142.0, 354.0, 502.0, 611.0, 492.0], "전라남도": [6921.0, 17265.0, 15374.0, 18909.0, 15923.0], "전북특별자치도": [4733.0, 5024.0, 6095.0, 10009.0, 8580.0], "제주특별자치도": [15779.0, 25491.0, 21994.0, 22342.0, 22701.0], "충청남도": [9824.0, 13204.0, 10503.0, 7428.0, 7346.0], "충청북도": [8668.0, 12907.0, 13468.0, 14610.0, 13270.0]}}, "centroid_lat": {"사과": [36.461, 36.437, 36.349, 36.325, 36.368], "배": [36.395, 36.206, 36.234, 36.096, 35.998], "복숭아": [36.273, 36.345, 36.524, 36.493, 36.437], "포도": [36.49, 36.46, 36.529, 36.518, 36.47], "감귤": [33.404, 33.401, 33.405, 33.402, 33.418], "감": [35.46, 35.465, 35.612, 35.666, 35.633], "단감": [null, null, 35.353, 35.338, 35.344], "떫은감": [null, null, 36.074, 35.922, 35.847], "자두": [36.401, 36.346, 36.356, 36.37, 36.328], "기타": [35.658, 35.678, 35.835, 35.792, 35.969], "매실": [null, null, null, null, 35.552]}, "lat": {"서울특별시": 37.57, "부산광역시": 35.18, "대구광역시": 35.87, "인천광역시": 37.46, "광주광역시": 35.16, "대전광역시": 36.35, "울산광역시": 35.54, "세종특별자치시": 36.48, "경기도": 37.4, "강원특별자치도": 37.8, "충청북도": 36.8, "충청남도": 36.5, "전북특별자치도": 35.7, "전라남도": 34.9, "경상북도": 36.4, "경상남도": 35.4, "제주특별자치도": 33.4}, "source": "KOSIS 농작물생산조사 과실생산량(성과수·미과수), 시도별"};
+const PAL = ["#9BE7FF","#4C9DB5","#F2C46D","#C9C8C2","#E68F7A","#8FD18A","#B79CE8","#6B7C82","#F29BC1","#7AA2F7"];
+const short = r => r.replace("특별자치도","").replace("특별자치시","").replace("광역시","").replace("특별시","").replace(/(경상|충청|전라)(남|북)도/,(m,a,b)=>a[0]+b).replace("도","");
+const nf = n => n==null?"–":Math.round(n).toLocaleString("ko-KR");
+if(window.Chart){Chart.defaults.color="#A3A39E";Chart.defaults.borderColor="#2A2C30";Chart.defaults.font.family="'Noto Sans KR','Space Grotesk'";}
+let crop="사과",charts={};
+const Y=D.years;
+const ser=c=>D.area[c];
+const totals=c=>Y.map((_,i)=>D.regions.reduce((s,r)=>s+(ser(c)[r][i]||0),0));
+const mk=(id,cfg)=>{charts[id]&&charts[id].destroy();charts[id]=new Chart(document.getElementById(id),cfg)};
+const base={responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{boxWidth:12}}}};
+
+function render(){
+ const s=ser(crop),T=totals(crop);
+ const top=D.regions.slice().sort((a,b)=>(s[b][4]||0)-(s[a][4]||0));
+ const show=top.slice(0,6);
+ // 01
+ mk("c1",{type:"line",data:{labels:Y,datasets:show.map((r,i)=>({label:short(r),data:s[r],borderColor:PAL[i],backgroundColor:PAL[i],tension:.25,spanGaps:true,pointRadius:3}))},options:{...base,scales:{y:{title:{display:true,text:"재배면적 (ha)"}}}}});
+ document.getElementById("e1").textContent=`${crop}: 2025년 재배면적이 가장 큰 곳은 ${short(top[0])} ${nf(s[top[0]][4])}ha입니다. 상위 6개 시도를 보여주며, 1985년 전국 ${nf(T[0])}ha에서 2025년 ${nf(T[4])}ha로 변했습니다.`;
+ // 02
+ const sh=(r,i)=>T[i]?(s[r][i]||0)/T[i]*100:0;
+ const diff=D.regions.map(r=>({r,a:sh(r,0),b:sh(r,4)})).filter(o=>o.a>0||o.b>0).sort((x,y)=>(y.b-y.a)-(x.b-x.a));
+ const pick=diff.slice(0,4).concat(diff.slice(-4)).filter((o,i,a)=>a.indexOf(o)===i);
+ mk("c2",{type:"bar",data:{labels:pick.map(o=>short(o.r)),datasets:[{label:"1985",data:pick.map(o=>+o.a.toFixed(1)),backgroundColor:"#3A4A50"},{label:"2025",data:pick.map(o=>+o.b.toFixed(1)),backgroundColor:"#9BE7FF"}]},options:{...base,scales:{y:{title:{display:true,text:"전국 대비 비중 (%)"}}}}});
+ const up=diff[0],dn=diff[diff.length-1];
+ document.getElementById("e2").textContent=`${crop}: 비중이 가장 크게 오른 곳은 ${short(up.r)}(${up.a.toFixed(1)}% → ${up.b.toFixed(1)}%), 가장 크게 줄어든 곳은 ${short(dn.r)}(${dn.a.toFixed(1)}% → ${dn.b.toFixed(1)}%)입니다.`;
+ // 03
+ const t5=top.slice(0,5),rest=D.regions.filter(r=>!t5.includes(r));
+ const ds=t5.map((r,i)=>({label:short(r),data:Y.map((_,j)=>+sh(r,j).toFixed(1)),backgroundColor:PAL[i]}));
+ ds.push({label:"기타",data:Y.map((_,j)=>+(100-t5.reduce((a,r)=>a+sh(r,j),0)).toFixed(1)),backgroundColor:"#3A3C40"});
+ mk("c3",{type:"bar",data:{labels:Y,datasets:ds},options:{...base,scales:{x:{stacked:true},y:{stacked:true,max:100,title:{display:true,text:"비중 (%)"}}}}});
+ document.getElementById("e3").textContent=`${crop}: 상위 5개 시도 ${t5.map(short).join("·")}와 나머지의 비중을 시점별로 쌓았습니다. 한 지역이 독점하는지, 여러 지역으로 퍼지는지 볼 수 있습니다.`;
+ // 04
+ const c=D.centroid_lat[crop];
+ mk("c4",{type:"line",data:{labels:Y,datasets:[{label:crop+" 평균 위도",data:c,borderColor:"#9BE7FF",backgroundColor:"rgba(155,231,255,.15)",fill:true,tension:.2,spanGaps:true}]},options:{...base,scales:{y:{title:{display:true,text:"위도 (°N)"}}}}});
+ const vals=c.filter(v=>v!=null),dv=vals[vals.length-1]-vals[0];
+ document.getElementById("e4").textContent=`${crop}: 재배 중심 위도는 ${vals[0].toFixed(2)}°에서 ${vals[vals.length-1].toFixed(2)}°로 ${dv>=0?"북쪽":"남쪽"}으로 ${Math.abs(dv).toFixed(2)}° 움직였습니다. 시도 단위 근사라 변화가 작아 보일 수 있습니다.`;
+ chips();heat();scatter();
+}
+function chips(){const el=document.getElementById("chips");el.innerHTML="";D.crops.filter(c=>["사과","배","복숭아","포도","감귤","감"].includes(c)).forEach(c=>{const b=document.createElement("button");b.className="chip"+(c===crop?" on":"");b.textContent=c;b.onclick=()=>{crop=c;render()};el.appendChild(b)})}
+function heat(){
+ const s=ser(crop),rs=D.regions.filter(r=>s[r].some(v=>v>0));
+ const g=document.getElementById("hm");g.style.gridTemplateColumns="110px repeat("+Y.length+",minmax(70px,1fr))";g.innerHTML="";
+ g.insertAdjacentHTML("beforeend",'<div class="h"></div>'+Y.map(y=>`<div class="h">${y}</div>`).join(""));
+ let max=1;rs.forEach(r=>{const b=s[r].find(v=>v>0);s[r].forEach(v=>{if(b&&v!=null)max=Math.max(max,v/b*100)})});
+ rs.forEach(r=>{const b=s[r].find(v=>v>0);g.insertAdjacentHTML("beforeend",`<div class="r">${short(r)}</div>`+s[r].map(v=>{if(v==null||!b)return'<div class="h">–</div>';const p=v/b*100,t=Math.min(1,Math.log10(Math.max(p,1))/Math.log10(Math.max(max,10)));const bg=`rgba(155,231,255,${(.08+.85*t).toFixed(2)})`;return`<div style="background:${bg};color:${t>.55?"#0A0B0D":"#F2F0EA"}">${Math.round(p)}</div>`}).join(""))});
+ document.getElementById("e5").textContent=`${crop}: 각 지역의 첫 기록 시점을 100으로 두고 이후 면적을 비교했습니다. 진한 칸일수록 첫 기록보다 크게 늘었습니다. 기록이 없는 칸은 –입니다.`;
+}
+function scatter(){
+ const s=ser(crop),pts=D.regions.map(r=>{const b=s[r].find(v=>v>0),e=s[r][4];return(b&&e!=null)?{x:D.lat[r],y:+((e/b-1)*100).toFixed(0),r}:null}).filter(Boolean);
+ mk("c6",{type:"scatter",data:{datasets:[{label:"시도",data:pts,backgroundColor:"#9BE7FF",pointRadius:6}]},options:{...base,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${short(c.raw.r)}: 위도 ${c.raw.x}°, ${c.raw.y}%`}}},scales:{x:{title:{display:true,text:"시도 대표 위도 (°N)"}},y:{title:{display:true,text:"면적 변화율 (%, 첫 기록 → 2025)"}}}}});
+ document.getElementById("e6").textContent=`${crop}: 위도가 높은 시도일수록 면적이 더 늘었는지 점으로 확인합니다. 점을 가리키면 시도별 값이 보입니다. 시도 수가 적어 추세는 참고용입니다.`;
+}
+(function stats(){
+ const s=ser("사과"),T=totals("사과"),gw=D.regions[0];
+ const items=[["40","년","1985–2025 과실 재배면적"],[(s[gw][0]/T[0]*100).toFixed(1)+"→"+(s[gw][4]/T[4]*100).toFixed(1),"%","사과 중 강원 비중 (1985→2025)"],[nf(T[4]),"ha","2025 사과 재배면적"],["10","개","그래프와 설명"]];
+ document.getElementById("stats").innerHTML=items.map(i=>`<div class="stat"><b>${i[0]}<i>${i[1]}</i></b><span>${i[2]}</span></div>`).join("");
+})();
+if(window.Chart)render();
+
+const MAP={"w": 92, "h": 100, "p": {"서울특별시": "M35.8,17.5L36.8,17.7L36.8,18.4L37.1,18.6L37.2,19.2L37.0,20.1L38.0,19.6L38.1,20.3L37.6,20.7L37.5,21.0L37.8,21.1L37.6,21.5L36.5,22.3L36.0,22.1L36.0,21.7L35.5,21.6L35.0,22.1L34.5,21.9L34.1,22.2L33.6,21.2L32.9,21.5L33.0,20.3L32.1,20.1L32.7,19.2L33.4,19.8L34.1,19.5L34.1,18.4L34.7,18.3L34.9,18.8L35.3,18.7L35.4,17.9Z", "부산광역시": "M61.4,63.3L61.8,64.2L61.6,65.0L61.4,65.1L61.4,64.7L60.9,63.8L61.5,63.7L61.2,63.6ZM63.3,64.0L63.2,63.0L62.9,63.6L62.9,63.0L62.4,63.5L62.4,62.8L62.2,63.5L61.6,63.5L61.3,63.2L61.6,63.1L61.6,62.7L61.0,62.1L62.0,62.0L62.1,62.3L62.2,61.2L63.8,60.8L64.1,60.1L65.4,59.5L65.8,58.7L65.5,58.4L66.4,58.7L66.7,58.1L67.6,58.1L67.8,58.9L68.2,59.1L67.6,59.3L67.3,60.2L67.2,60.4L67.5,60.6L67.1,61.0L67.0,61.7L66.4,62.2L65.5,62.3L65.6,63.2L65.3,63.3L64.6,62.7L64.1,64.0L63.9,63.4L64.0,64.1L63.5,63.9L63.4,64.3Z", "대구광역시": "M59.6,47.1L60.3,47.8L60.1,48.6L60.5,49.3L60.3,49.9L59.9,49.9L59.9,50.8L59.4,51.1L59.5,52.1L58.5,52.6L58.4,52.0L57.7,52.0L57.2,52.4L57.2,52.9L56.9,53.1L56.9,53.7L55.6,54.0L54.9,54.2L55.4,53.7L54.7,52.6L55.8,52.5L55.8,52.2L55.1,51.6L55.6,50.7L56.4,50.8L56.5,50.5L56.1,50.1L55.1,50.0L55.3,49.1L56.1,48.4L56.4,48.5L56.3,49.1L56.8,49.4L57.3,48.5L57.2,47.7L57.5,48.1L58.5,47.3Z", "인천광역시": "M22.8,25.0L23.0,25.5L23.6,25.7L23.4,26.1L22.5,25.9ZM28.1,25.5L27.8,25.9L27.4,25.7L27.5,25.0L28.0,24.8L28.4,25.0L28.4,25.3ZM28.4,20.5L29.3,20.8L29.6,21.2L28.5,21.7L27.6,22.4L26.6,22.1L26.4,21.5L28.0,21.1ZM30.6,18.6L32.0,19.7L32.6,19.6L31.8,20.9L31.8,21.3L32.4,21.6L32.2,22.3L31.5,23.1L31.0,23.1L30.6,23.8L29.5,23.9L29.8,23.7L29.6,23.6L30.4,23.6L29.8,22.5L30.3,22.3L30.0,22.3L30.0,21.9L29.7,22.1L29.7,21.7L30.1,21.8L29.7,21.5L30.2,21.2L30.3,21.4L30.4,21.0L29.9,21.1L29.9,20.1L29.4,19.5L30.2,19.3ZM17.2,17.9L16.9,18.4L16.8,18.2L16.7,17.9ZM26.0,16.7L25.8,17.3L26.7,17.9L26.3,18.4L26.1,18.5L25.8,17.9L25.1,17.4L25.4,17.3L25.4,16.8ZM25.1,15.5L25.9,15.6L26.0,16.0L25.4,16.4L24.7,16.5L24.6,16.6L24.2,16.3L24.7,15.5ZM27.5,15.4L28.5,16.1L28.8,16.7L28.6,18.0L29.0,19.0L28.7,19.1L28.6,19.6L28.6,19.3L28.2,19.2L27.0,19.4L26.5,18.7L27.1,18.4L26.8,17.6L26.3,17.3L26.3,16.0L26.9,15.4ZM3.1,15.3L2.6,15.8L2.3,15.4L2.9,14.9L3.2,15.1ZM2.7,12.6L3.1,12.6L3.5,13.0L2.9,13.5L2.7,13.7L2.0,13.6L1.6,13.0L1.7,12.6Z", "광주광역시": "M32.1,60.4L32.0,60.8L32.7,61.1L34.3,60.4L35.0,61.7L35.5,61.6L35.8,61.9L35.6,62.7L34.8,63.6L34.3,63.3L33.0,63.9L32.0,63.9L32.2,63.7L31.7,62.9L30.8,63.1L30.5,62.8L30.4,62.3L30.8,61.9L30.6,61.5L31.5,61.2L31.8,60.5Z", "대전광역시": "M41.1,38.8L41.3,39.4L41.9,39.5L42.4,39.0L42.3,39.3L42.6,39.4L42.4,39.8L42.6,40.2L42.9,39.9L43.4,40.4L42.9,40.6L42.9,41.2L42.6,41.4L42.4,43.3L41.8,44.0L41.2,43.4L41.0,42.8L40.6,42.6L40.7,43.5L40.2,44.1L40.0,43.5L39.5,43.2L39.6,42.7L39.0,42.3L39.4,41.3L39.5,40.1L40.3,39.8L40.6,38.8Z", "울산광역시": "M66.1,52.4L66.8,52.3L67.5,52.6L67.5,53.3L68.1,53.6L68.9,53.0L70.2,53.4L70.4,55.1L70.0,56.5L69.6,56.6L69.2,55.5L69.4,56.1L69.0,56.1L69.4,56.5L69.1,56.9L68.6,56.4L68.9,57.2L69.2,57.1L68.8,58.3L69.0,58.6L68.2,59.2L67.9,58.9L67.6,58.1L66.7,58.1L67.0,57.8L66.7,57.2L66.2,57.3L65.4,56.2L64.6,55.9L64.7,55.6L63.8,55.7L63.5,55.1L64.1,54.7L64.2,54.2L63.9,54.0L64.2,53.8L65.0,53.6L64.8,53.1L65.0,52.7L65.9,52.2Z", "세종특별자치시": "M37.9,34.5L39.8,35.4L39.4,36.1L39.6,36.2L39.7,37.1L40.3,37.5L40.8,37.4L41.3,38.1L41.3,38.7L40.7,38.8L40.1,40.0L39.0,40.2L38.3,39.7L38.2,38.8L37.9,38.4L38.0,37.9L38.4,37.2L37.7,36.7L37.8,35.3L37.3,34.9Z", "경기도": "M31.8,29.2L32.0,28.9L30.9,27.8L30.9,27.3L30.7,27.4L31.2,27.2L30.5,27.1L30.8,26.5L30.5,26.6L30.6,25.1L30.3,24.8L30.7,24.7L30.2,24.8L30.7,24.7L30.7,24.9L31.0,24.9L30.9,25.3L32.0,25.4L32.4,25.8L32.5,25.1L32.8,25.1L32.7,24.7L33.2,25.0L32.9,24.6L32.2,24.7L30.8,24.1L30.0,24.3L29.5,24.7L30.2,25.2L30.4,25.2L30.2,24.9L30.4,25.0L30.6,26.3L30.2,26.0L30.2,26.3L30.1,25.7L29.6,25.7L30.0,26.1L29.7,26.3L29.8,25.9L29.5,26.0L29.3,26.4L29.0,25.8L29.4,25.7L28.9,24.8L29.3,25.0L29.4,24.6L31.1,23.9L31.8,22.8L32.5,22.9L32.5,22.7L32.4,22.9L31.9,22.7L32.4,21.8L31.8,21.3L32.2,20.1L33.0,20.3L32.9,21.5L33.6,21.2L34.1,22.2L34.5,21.9L35.0,22.1L35.5,21.6L36.0,21.7L36.2,22.3L37.5,21.5L37.8,21.1L37.5,21.0L37.6,20.7L38.1,20.3L38.0,19.6L36.9,20.0L37.1,19.0L36.6,17.6L36.2,17.8L35.7,17.5L35.1,18.7L34.9,18.8L34.7,18.3L34.1,18.4L34.1,19.5L33.4,19.8L32.7,19.2L32.6,19.6L32.0,19.7L30.6,18.6L30.2,19.3L29.2,19.3L28.8,18.0L28.6,16.2L28.7,16.0L29.7,16.5L30.7,16.1L30.6,15.1L31.1,14.6L30.8,14.6L30.8,13.1L32.4,12.6L33.4,11.7L33.5,10.4L34.1,9.9L35.0,9.9L34.8,9.4L35.2,8.3L35.6,8.4L36.8,7.3L37.1,8.1L37.8,8.1L38.2,9.4L38.6,9.8L39.5,9.1L39.7,9.2L39.4,10.1L39.9,10.2L40.0,10.6L40.9,10.2L41.4,10.5L41.6,10.3L42.0,12.1L43.1,12.3L43.2,12.8L44.0,13.1L44.2,13.5L44.1,14.4L42.9,15.3L43.1,15.6L42.9,15.9L43.2,16.5L42.7,17.2L43.5,17.2L43.1,18.6L43.4,18.8L44.1,18.4L45.5,19.5L46.8,19.6L47.5,20.2L46.3,21.0L46.8,21.6L46.9,22.3L46.5,23.3L46.3,23.4L46.4,24.4L46.1,24.6L46.1,26.0L45.4,27.4L44.4,27.1L44.5,28.1L43.9,28.3L44.1,28.6L43.7,28.5L43.4,29.1L42.1,28.9L41.8,29.6L41.1,29.9L41.2,30.4L40.8,30.7L39.7,31.0L39.6,31.7L37.5,30.3L37.1,30.3L36.8,30.8L35.4,31.0L34.2,31.6L34.1,31.1L33.3,30.8L33.0,30.0L32.5,29.9L32.3,29.7L32.6,29.4Z", "강원특별자치도": "M60.0,11.9L62.2,15.3L64.7,18.0L64.5,18.7L65.5,19.7L65.5,20.4L66.0,21.1L65.6,21.2L65.9,21.1L66.5,21.8L66.7,22.5L67.5,23.2L67.7,24.2L68.5,24.9L68.9,25.7L68.7,25.9L68.7,26.8L69.0,27.3L67.7,27.8L67.1,28.5L67.2,29.1L66.5,29.1L66.2,28.6L65.2,28.1L64.7,28.7L62.8,28.2L62.4,29.0L61.7,28.9L61.4,28.4L60.8,28.2L60.4,28.6L60.4,29.3L58.5,28.3L57.3,28.3L56.7,27.6L55.7,28.0L55.1,27.1L54.5,27.1L53.9,27.5L53.4,27.0L54.3,26.3L54.2,25.9L53.5,26.2L52.5,25.5L52.0,26.1L51.5,25.7L50.9,26.3L50.2,26.5L49.9,25.5L49.4,25.3L48.6,25.9L48.7,26.7L48.2,27.2L47.9,26.9L46.7,27.3L46.3,27.0L46.0,26.1L46.3,25.1L46.1,24.6L46.4,24.4L46.3,23.4L46.5,23.3L46.9,22.3L46.8,21.6L46.3,21.0L47.5,20.1L46.8,19.6L45.5,19.5L44.1,18.4L43.4,18.8L43.1,18.6L43.5,17.2L42.7,17.2L43.2,16.5L42.9,15.9L43.1,15.6L42.9,15.3L44.1,14.4L44.2,13.5L44.0,13.1L43.2,12.8L43.1,12.3L42.0,12.1L41.6,10.3L41.4,10.5L40.9,10.2L40.0,10.6L39.9,10.2L39.4,10.1L39.7,9.2L39.5,9.1L38.6,9.8L38.2,9.4L37.8,8.1L37.1,8.1L36.8,7.3L37.4,6.8L37.7,6.9L38.9,6.4L39.7,6.8L40.9,6.4L42.0,6.5L42.5,7.0L43.7,6.4L45.2,6.6L46.6,6.2L47.1,7.0L48.6,6.9L49.7,7.4L49.9,6.8L50.7,6.8L51.9,6.3L53.7,4.6L54.1,3.3L54.1,1.9L54.7,1.5L55.5,2.5L55.7,3.4L56.3,4.4L56.2,4.7L56.9,5.7L57.6,7.8L58.2,8.5L57.9,8.9L58.2,8.7L58.4,9.1L58.3,9.7Z", "충청북도": "M39.9,34.7L40.3,34.6L40.2,34.2L40.6,34.0L41.2,34.3L41.5,34.0L41.1,33.6L41.2,33.3L40.2,32.8L40.2,32.3L39.8,32.3L39.9,31.8L39.6,31.7L39.7,31.0L40.8,30.7L41.2,30.4L41.1,29.9L41.8,29.6L42.1,28.9L43.4,29.1L43.7,28.5L44.1,28.6L43.9,28.3L44.5,28.1L44.4,27.1L45.3,27.4L46.0,26.1L46.2,26.8L46.7,27.3L47.9,26.9L48.2,27.2L48.7,26.7L48.6,25.9L49.4,25.3L49.9,25.5L50.2,26.5L51.2,26.2L51.5,25.7L52.0,26.1L52.5,25.5L53.5,26.2L54.2,25.9L54.3,26.3L53.4,27.0L53.9,27.5L54.5,27.1L55.1,27.1L55.7,28.0L56.7,27.6L57.3,28.3L58.5,28.3L58.9,28.7L58.7,29.1L58.3,28.9L57.7,29.2L57.5,29.9L55.9,31.1L55.7,32.0L56.0,32.5L55.7,33.1L54.8,33.3L54.2,33.0L53.1,32.1L53.0,32.5L52.7,32.5L52.7,33.1L51.6,32.8L51.0,33.4L50.5,33.0L50.1,34.3L50.6,34.6L50.7,34.9L50.4,35.0L49.1,34.4L48.7,35.2L47.9,35.4L48.7,35.6L48.6,36.8L48.0,35.8L47.5,36.2L47.7,36.6L46.8,36.9L47.7,37.4L48.3,38.5L47.9,38.8L48.0,40.0L47.7,40.5L48.1,41.1L47.4,41.9L47.6,42.6L48.0,42.6L48.3,42.1L49.1,42.9L50.0,42.7L50.3,42.9L50.1,43.2L50.5,43.8L49.4,43.9L49.6,44.6L48.9,46.4L47.9,47.0L47.5,46.7L46.4,47.2L45.4,46.7L45.3,46.3L44.9,46.7L43.8,45.0L44.0,43.8L43.8,43.3L43.2,43.4L43.1,43.0L42.5,43.2L42.6,41.4L42.9,41.2L42.9,40.6L43.4,40.4L42.9,39.9L42.6,40.2L42.4,39.8L42.6,39.4L42.3,39.3L42.4,39.0L41.9,39.5L41.2,39.4L41.2,37.9L40.9,37.9L40.8,37.4L40.3,37.5L39.7,37.1L39.6,36.2L39.4,36.1L39.8,35.7L39.5,35.3Z", "충청남도": "M26.6,36.9L26.4,37.3L26.6,37.5L26.7,38.3L27.1,38.7L27.4,40.3L26.8,40.0L26.4,40.1L26.5,39.6L26.0,39.6L26.1,38.5L25.7,37.1L26.4,36.6ZM31.2,29.8L32.4,30.3L32.9,31.6L33.5,31.9L35.4,31.0L36.8,30.8L37.1,30.3L37.7,30.4L39.4,31.4L39.9,31.8L39.8,32.3L40.3,32.4L40.2,32.8L41.2,33.3L41.4,34.1L40.2,34.2L40.3,34.5L39.5,35.3L37.8,34.5L37.3,34.9L37.8,35.3L37.7,36.7L38.4,37.2L38.0,37.9L37.9,38.4L38.2,38.8L38.3,39.7L39.0,40.2L39.5,40.1L39.4,41.3L39.0,42.3L39.6,42.7L39.5,43.2L40.0,43.5L40.2,44.1L40.7,43.5L40.8,42.6L41.0,42.8L41.0,43.3L41.7,44.0L43.0,43.0L43.2,43.4L43.7,43.3L44.0,43.6L43.8,45.0L44.5,46.2L44.3,46.2L44.3,46.7L44.6,46.8L44.2,46.9L44.2,47.3L43.1,46.7L43.1,47.4L42.7,47.7L42.0,47.7L41.7,46.9L41.1,47.2L40.6,46.4L40.3,45.1L39.1,45.4L39.0,45.9L38.4,45.6L38.3,45.9L37.5,45.8L37.2,46.3L36.4,45.8L36.1,44.8L34.9,44.6L33.9,44.9L33.6,46.3L31.9,46.9L31.7,47.4L30.7,47.3L30.8,46.8L30.1,46.0L30.4,45.7L30.0,45.7L29.4,44.9L29.2,45.1L28.7,44.7L28.4,44.9L28.5,45.1L28.3,45.0L28.3,44.6L28.8,44.4L28.8,43.2L29.1,42.7L28.4,41.6L29.2,41.2L28.5,40.6L28.1,40.6L28.3,39.9L28.8,39.6L28.3,39.8L27.9,37.1L26.5,36.4L25.6,37.0L25.3,36.9L25.3,36.5L25.6,36.4L25.5,35.8L25.0,35.5L25.2,34.5L24.6,34.8L24.7,35.0L24.1,35.5L23.5,35.4L23.4,35.0L24.5,34.8L24.1,34.7L24.3,34.4L23.9,34.2L23.3,34.1L23.4,34.6L23.0,34.9L23.2,34.2L22.9,33.8L23.4,33.5L23.6,32.9L23.4,32.5L23.9,33.1L23.8,32.8L24.1,32.4L23.8,31.8L24.8,31.3L25.4,31.6L25.3,30.5L25.6,30.2L25.6,31.2L26.0,31.7L25.5,32.4L25.8,32.8L25.3,32.9L25.5,33.4L26.1,33.0L25.8,32.6L26.0,32.3L26.2,32.3L26.5,32.8L26.5,32.0L27.4,31.6L27.0,31.2L27.2,30.9L26.8,31.1L26.0,30.5L26.8,30.4L25.9,29.8L27.3,29.5L27.7,29.8L28.4,28.7L30.3,29.8Z", "전북특별자치도": "M35.4,44.8L36.1,44.8L36.4,45.8L37.2,46.3L37.5,45.8L38.3,45.9L38.4,45.6L39.0,45.9L39.1,45.4L40.3,45.1L40.8,47.0L41.2,47.2L41.7,46.9L42.0,47.7L42.4,47.7L43.1,47.5L43.0,46.7L43.9,46.9L44.2,47.4L44.2,46.9L44.6,46.8L44.3,46.7L44.3,46.2L44.9,46.7L45.3,46.3L45.4,46.7L46.3,47.2L47.5,46.7L47.9,47.0L48.4,48.4L48.0,48.6L48.0,49.0L47.7,49.0L47.4,49.7L46.0,50.1L45.7,50.9L44.9,51.4L44.9,52.5L44.3,53.6L44.5,54.1L43.8,55.0L44.7,56.2L44.5,56.9L45.1,57.1L44.1,58.5L44.3,59.1L43.7,59.5L42.6,58.6L41.7,58.5L40.9,59.6L40.5,59.3L39.9,59.6L39.1,59.4L38.6,59.0L38.4,59.4L38.1,59.0L37.0,59.7L36.1,59.3L36.5,59.0L36.5,58.5L35.9,58.0L36.2,57.4L36.0,56.7L35.5,56.8L35.1,57.4L35.1,57.9L34.6,58.0L34.0,57.1L33.2,56.8L33.0,56.4L32.8,56.7L31.8,57.0L32.0,57.6L31.5,57.9L31.7,58.3L31.2,58.8L30.7,58.7L30.4,59.3L29.6,59.1L29.6,59.6L28.8,59.5L28.6,58.6L28.3,58.8L28.3,58.4L28.1,58.1L28.3,57.7L27.4,57.3L27.4,57.0L28.2,55.7L28.3,56.0L29.2,55.4L29.7,55.6L30.3,54.8L30.8,55.3L30.6,54.6L28.5,54.8L27.8,54.2L27.8,53.7L29.2,52.7L28.7,52.1L28.1,50.6L28.7,52.0L29.4,52.9L30.2,51.8L30.3,50.9L31.3,50.9L30.9,49.3L30.0,49.4L30.1,48.4L29.7,48.3L29.6,49.1L29.5,49.1L29.6,48.8L29.3,49.0L29.3,48.5L28.9,48.5L28.4,50.3L27.7,50.8L27.6,50.4L28.0,50.5L28.3,50.2L28.8,48.6L28.6,47.8L31.7,47.6L31.9,46.9L33.6,46.3L33.9,44.9L34.9,44.6Z", "전라남도": "M29.1,79.3L30.1,79.6L30.0,79.9L29.7,79.6L29.4,79.9L28.6,80.3L28.5,79.7ZM30.6,79.0L31.0,79.3L30.6,79.4L31.0,79.9L30.6,80.4L30.2,79.9L30.5,79.5L30.3,79.2ZM33.9,78.6L34.2,78.7L34.2,79.2L34.5,79.1L34.3,79.7L33.5,79.7L33.3,79.4L33.5,79.0ZM29.4,78.4L30.0,78.7L30.2,78.9L29.8,79.0L30.0,79.2L29.6,79.1L29.6,79.4L29.1,79.1L29.3,78.5L29.1,78.4ZM33.2,77.0L32.0,76.6L32.9,76.6L33.1,76.2L33.5,76.4L34.0,76.6L33.8,77.0L33.6,76.8L33.2,77.2ZM35.9,76.5L35.3,76.2L35.9,75.8L36.1,76.3L36.7,76.3L36.9,76.5L36.4,76.4L36.6,76.6L36.1,77.0L36.2,76.5ZM31.1,75.5L31.6,75.8L31.9,76.8L32.2,77.0L32.1,77.2L32.3,77.4L31.7,77.1L31.7,77.4L31.2,77.3L30.4,76.7L30.4,75.8ZM34.7,75.6L34.7,76.0L34.2,76.3L33.5,75.9L33.6,75.3L33.8,75.4L34.5,75.6L34.7,75.2ZM33.1,74.8L33.3,75.1L33.0,75.1L33.4,75.1L33.6,75.6L32.7,75.7L32.4,76.1L32.2,76.1L32.4,75.8L31.9,75.8L32.1,75.3L32.5,74.9ZM42.3,74.3L42.6,74.2L43.1,74.6L43.0,75.0L42.5,75.2L42.5,74.9L42.1,74.7L42.4,74.6L41.9,74.6L41.9,74.1ZM38.6,73.8L38.8,74.1L38.4,74.9L37.5,75.1L37.1,74.8L36.8,74.2L37.1,73.9L37.5,74.2ZM42.1,72.9L42.3,73.0L42.0,73.2L42.2,73.4L42.0,73.4L42.7,73.8L42.3,74.0L41.9,74.1L41.7,73.8L42.0,73.5L41.6,73.3ZM46.4,73.1L46.6,73.5L46.4,73.5L46.8,73.8L46.4,73.7L45.9,73.6L45.9,73.2L45.4,73.0L46.2,72.8ZM24.9,72.2L25.6,72.4L25.8,72.9L26.1,72.8L26.7,73.6L26.7,74.0L26.4,74.0L26.5,74.7L26.1,75.4L25.9,75.5L25.8,75.0L25.8,75.4L25.4,75.3L25.7,75.7L25.5,75.9L25.3,76.0L25.4,75.6L25.1,75.5L25.1,75.8L24.2,75.9L24.3,76.1L23.8,76.3L23.6,76.0L23.3,76.2L23.3,75.7L22.9,75.8L22.6,75.1L24.0,73.4L24.0,73.8L24.2,73.8L24.1,73.5L24.5,73.4L24.3,73.2L24.6,73.0L24.9,72.6L24.7,72.2ZM22.1,71.4L22.9,72.1L22.6,72.5L22.7,72.8L21.9,73.1L21.7,72.9L22.1,72.7L21.7,72.6L22.2,72.6L22.5,72.2L22.0,71.8ZM21.5,71.3L21.8,71.4L21.8,71.7L22.2,72.2L21.6,72.6L21.5,72.2ZM23.6,70.7L24.1,71.3L23.1,71.7L23.0,71.5L23.2,71.2L22.9,71.1ZM13.1,70.2L13.5,70.4L12.8,71.5L12.6,70.9ZM46.6,70.0L46.7,70.2L46.3,70.1L46.9,70.9L46.8,71.2L46.8,72.2L46.1,72.1L45.6,71.6L45.8,71.3L45.6,71.2L46.3,70.4L45.9,69.6ZM20.9,69.7L21.5,70.2L20.8,70.9L20.2,70.7L20.1,70.2L20.7,69.5ZM22.8,69.0L23.8,69.2L23.8,70.1L23.4,70.1L23.2,69.7L22.4,70.0L22.5,69.3L22.2,69.0ZM26.4,68.8L26.6,69.1L26.3,69.3L26.3,68.9ZM21.2,68.3L21.3,69.1L20.3,69.2L20.6,69.6L20.4,69.8L19.7,69.5L19.9,68.8L20.4,68.8ZM22.9,67.0L23.4,67.0L23.5,67.4L23.2,67.4L23.4,67.7L23.3,67.9L23.0,67.8L23.0,68.4L22.6,68.5L22.5,68.1L22.3,68.2L22.4,68.5L21.9,68.0L22.4,68.1L22.1,67.6L22.9,67.5ZM25.5,67.5L24.5,67.6L25.6,66.9L25.3,66.4L26.1,66.5L26.3,66.8L26.0,66.9L25.8,67.3L26.5,67.4L26.5,68.0L26.1,68.1L25.9,68.0L26.2,67.7ZM22.2,66.1L22.7,66.5L22.5,66.7L22.6,67.1L22.4,67.0L22.5,67.3L22.0,67.6L21.6,67.2L21.4,67.3L20.8,67.1L21.1,67.1L21.5,66.5L22.1,66.5ZM46.0,66.0L46.6,66.5L46.6,66.9L46.0,66.5L45.5,66.2L45.9,65.8ZM23.2,64.5L23.6,64.6L23.8,65.4L23.0,65.8L23.4,65.1L23.2,64.9L22.7,64.9ZM22.1,63.6L22.0,63.1L22.4,63.0L22.9,62.4L23.6,62.4L23.1,62.5L23.0,63.2L22.7,64.1L22.4,63.7L22.2,63.9L21.8,63.8ZM33.9,74.5L33.6,74.5L33.8,75.1L32.7,74.5L32.8,74.2L32.5,74.4L32.6,72.9L32.3,71.7L32.2,73.7L31.8,73.9L32.0,74.2L30.9,75.2L30.7,75.0L30.0,75.4L29.9,76.9L29.2,76.8L28.7,77.3L28.7,76.1L28.0,76.3L27.9,76.1L28.2,76.1L28.0,75.7L28.3,75.7L28.2,75.3L28.6,75.2L28.5,74.7L28.1,75.0L27.8,74.6L28.1,74.6L27.8,74.1L28.0,73.6L27.6,73.3L27.8,73.1L27.2,72.7L26.8,73.1L26.7,72.6L25.7,72.5L25.7,72.1L25.0,71.7L25.5,71.4L25.0,71.2L24.9,70.8L25.3,69.2L26.0,69.5L26.4,70.3L26.8,69.6L26.4,69.4L26.7,69.0L27.7,68.7L27.5,68.4L26.7,68.8L26.3,68.5L27.1,67.7L27.0,67.0L26.8,67.1L27.0,66.5L26.6,64.9L26.4,65.5L26.5,66.3L25.6,66.2L25.8,65.9L25.5,65.5L25.7,65.1L25.9,65.5L26.4,65.2L26.0,65.0L26.8,64.5L26.7,64.1L26.3,64.2L25.8,63.4L25.6,64.1L25.3,63.8L25.0,64.0L25.2,64.3L24.8,64.7L24.8,64.4L24.5,64.6L24.6,64.0L23.6,63.7L23.6,63.2L24.0,62.9L25.0,63.3L24.7,63.0L25.0,62.4L25.8,62.7L26.2,62.1L26.0,63.3L26.3,63.2L26.2,63.6L26.5,63.5L26.5,63.8L26.8,63.4L26.7,63.7L27.1,63.8L26.8,64.2L27.4,64.4L27.2,64.1L27.8,63.6L27.5,63.4L27.9,63.2L27.3,63.0L26.4,61.9L26.6,61.2L26.1,61.6L26.1,61.2L25.9,61.3L25.5,61.0L26.2,60.1L26.0,60.0L26.6,59.9L26.9,58.4L27.6,58.8L27.1,58.2L27.1,57.3L28.1,57.4L28.3,57.7L28.1,58.1L28.3,58.4L28.3,58.8L28.6,58.6L28.8,59.5L29.6,59.6L29.6,59.1L30.4,59.3L30.7,58.7L31.0,58.8L32.0,57.6L31.8,57.0L32.8,56.7L33.0,56.4L33.2,56.8L34.0,57.1L34.6,58.0L35.1,57.9L35.1,57.4L35.5,56.8L36.0,56.7L36.2,57.4L35.9,58.0L36.5,58.5L36.5,59.0L36.1,59.3L37.0,59.7L38.1,59.0L38.4,59.4L38.6,59.0L39.1,59.4L39.9,59.6L40.5,59.3L40.9,59.6L41.7,58.6L42.6,58.6L43.7,59.5L44.2,60.5L44.3,61.6L46.6,64.6L46.2,65.6L46.4,66.1L46.1,66.1L46.2,65.6L45.9,65.7L45.4,66.3L45.0,66.1L45.0,66.6L44.6,67.0L44.3,66.6L44.8,66.5L43.7,66.3L44.2,66.8L43.9,67.1L44.5,67.6L44.5,67.9L45.3,67.3L46.5,67.4L46.4,68.4L46.1,68.8L46.2,69.5L45.4,69.8L44.9,69.2L44.6,70.1L44.2,70.1L44.6,70.5L44.2,70.5L44.6,71.4L43.8,71.0L43.7,71.4L43.3,70.9L43.3,70.3L43.7,70.3L43.3,69.9L43.9,69.3L43.4,68.8L43.4,68.3L42.9,68.2L43.2,67.7L42.9,67.6L42.8,67.0L42.5,67.1L42.4,67.7L41.7,67.6L41.2,68.0L40.5,67.7L41.5,68.2L41.0,68.6L41.2,69.0L40.8,69.4L41.6,70.6L42.4,71.1L42.0,71.1L42.5,71.4L42.7,72.1L42.4,72.4L42.0,72.1L41.8,72.3L41.1,72.2L41.3,72.3L41.1,72.6L41.7,72.8L41.6,73.4L40.8,73.6L41.0,74.0L40.3,73.9L40.0,74.3L40.3,74.6L39.3,74.0L39.5,73.7L39.1,73.3L38.6,73.1L38.5,73.4L38.2,73.1L37.6,73.3L37.1,72.9L37.6,71.9L37.9,72.0L38.3,71.0L38.7,71.0L39.1,70.0L39.5,69.9L39.4,70.6L39.9,70.8L40.4,70.0L40.1,69.3L39.2,69.6L38.9,69.1L38.1,70.3L37.2,70.2L36.1,71.3L34.9,71.4L35.6,71.8L35.2,72.4L35.6,72.5L35.0,73.7L35.2,74.2L34.7,74.0L34.6,74.6Z", "경상북도": "M69.8,31.7L70.7,33.9L70.6,34.6L70.5,35.4L70.1,35.6L69.7,36.4L69.7,37.1L70.3,38.5L69.2,42.3L69.4,43.6L69.2,43.9L69.5,44.2L69.5,45.0L70.1,45.7L69.2,46.5L69.3,46.9L70.0,46.8L69.5,47.1L69.9,47.0L69.7,47.3L70.3,47.5L71.0,46.9L71.6,45.9L72.2,46.6L72.2,47.1L71.2,48.6L71.5,49.1L71.2,49.6L71.5,49.7L70.8,51.1L70.5,53.2L70.0,53.5L68.9,53.0L68.1,53.6L67.5,53.3L67.5,52.6L65.9,52.2L65.0,52.8L64.9,53.7L64.5,53.5L63.6,54.2L63.0,53.8L62.2,53.8L61.7,54.6L61.1,54.6L60.8,55.0L59.0,54.4L58.2,54.7L57.3,54.0L57.2,52.4L57.9,52.0L58.4,52.0L58.5,52.6L59.4,52.3L59.5,51.7L59.4,51.1L59.9,50.8L59.9,49.9L60.5,49.7L60.5,49.0L60.1,48.6L60.3,47.8L59.5,47.1L58.5,47.3L57.5,48.1L57.2,47.7L57.3,48.5L56.8,49.4L56.3,49.1L56.4,48.5L56.1,48.4L55.3,49.1L55.1,50.0L56.1,50.1L56.5,50.6L55.6,50.7L55.1,51.6L55.8,52.2L55.8,52.5L54.7,52.6L55.4,53.7L55.0,54.2L54.7,53.6L54.0,53.4L53.4,53.6L53.1,53.4L52.9,53.7L52.0,53.4L52.0,53.1L52.6,52.9L52.5,52.3L51.9,51.2L51.5,51.1L51.4,50.5L50.7,50.2L49.8,50.4L49.4,49.8L48.6,49.9L48.5,49.2L48.0,49.2L48.0,48.6L48.4,48.3L47.9,47.4L47.9,47.0L49.1,46.1L49.2,45.3L49.6,44.6L49.4,43.9L50.5,43.8L50.1,43.2L50.3,42.9L50.0,42.7L49.1,42.9L48.3,42.1L48.0,42.6L47.6,42.6L47.4,41.9L48.1,41.1L47.7,40.5L48.0,40.0L47.9,38.8L48.3,38.5L47.7,37.4L47.2,37.4L46.8,36.8L47.7,36.6L47.5,36.2L48.0,35.8L48.6,36.8L48.7,35.6L47.9,35.4L48.7,35.2L49.1,34.4L50.7,35.0L50.1,34.3L50.5,33.0L51.0,33.4L51.6,32.8L52.7,33.1L52.7,32.5L53.0,32.5L53.1,32.1L54.2,33.0L54.8,33.3L55.7,33.1L56.0,32.5L55.7,32.0L55.9,31.1L57.5,29.9L57.7,29.2L58.3,28.9L58.7,29.1L58.9,28.7L60.4,29.3L60.4,28.6L60.8,28.2L61.4,28.4L61.7,28.9L62.4,29.0L62.8,28.2L64.7,28.7L65.2,28.1L66.2,28.6L66.5,29.1L67.2,29.1L67.1,28.5L67.7,27.8L69.0,27.3L69.3,28.1L70.0,28.8L69.7,29.3ZM91.0,20.3L91.1,21.3L90.5,21.9L89.8,21.6L89.4,21.3L89.3,20.6Z", "경상남도": "M54.7,67.7L55.1,68.2L55.1,67.9L55.9,67.9L55.7,69.1L55.3,68.8L54.8,68.5L55.1,68.2L54.4,68.1L54.5,67.7ZM50.1,66.3L49.8,67.2L50.4,66.7L50.6,67.1L50.4,67.5L50.8,67.9L49.2,67.7L49.2,67.2L49.7,66.4ZM48.3,67.4L49.0,68.3L49.5,67.9L50.6,68.1L50.4,68.5L50.5,69.4L50.2,69.8L50.5,70.0L50.0,70.1L49.9,69.8L49.1,70.0L48.9,68.8L48.3,69.0L48.4,69.5L48.1,69.8L47.4,69.3L47.7,68.8L46.9,67.5L47.2,66.6L47.7,66.6L47.6,66.2L48.1,65.8L48.7,66.2ZM59.2,68.7L58.7,69.1L59.3,69.7L58.6,69.5L58.7,70.0L57.9,70.1L58.3,69.6L57.8,69.5L58.2,68.8L57.6,69.0L57.7,68.7L57.4,68.9L57.3,68.6L58.0,68.5L58.0,67.6L57.1,67.9L57.0,68.3L56.5,67.7L56.4,66.9L57.2,66.3L57.8,66.7L57.9,66.4L58.2,66.4L58.5,66.8L58.0,65.7L58.3,65.4L58.9,65.7L59.0,65.0L59.3,65.1L59.3,64.2L59.9,64.5L59.5,65.0L60.0,65.9L60.0,66.4L59.5,67.0L59.8,67.2L59.9,66.8L60.4,66.7L60.2,67.2L59.9,67.3L60.1,67.7L59.6,67.7L59.9,67.7L60.2,68.6L59.2,68.2ZM56.2,63.3L56.4,63.6L54.8,64.1L55.1,64.3L54.9,64.6L55.2,64.6L55.1,64.3L55.9,64.1L56.3,63.6L56.5,64.0L56.2,64.1L56.8,64.6L56.3,65.1L55.5,65.0L56.0,65.3L55.7,67.1L56.0,66.9L55.9,66.4L56.4,66.8L56.3,67.2L56.1,67.0L56.1,67.6L55.3,67.9L54.9,67.5L55.6,67.3L55.1,67.2L55.0,66.8L55.0,67.2L54.6,66.9L54.6,67.1L54.3,67.1L53.9,66.7L54.7,66.5L54.4,65.7L54.2,65.6L53.9,66.4L53.5,66.7L53.5,66.0L52.8,65.9L52.5,66.0L52.5,66.8L51.9,66.5L51.6,66.9L51.1,66.7L51.4,66.3L50.9,66.4L50.1,65.7L50.4,65.4L50.4,64.6L50.2,64.5L50.5,63.5L50.2,63.6L50.0,64.4L49.8,64.0L49.4,64.2L49.9,64.7L49.8,65.2L49.6,65.0L49.4,65.3L49.2,65.0L48.8,65.3L48.6,64.7L48.2,65.7L47.5,65.8L47.4,65.6L46.8,66.3L46.3,65.5L46.7,64.7L46.4,64.0L44.3,61.7L44.2,60.5L43.7,59.6L44.3,59.1L44.1,58.5L45.1,57.1L44.5,56.9L44.8,56.4L44.4,55.5L43.8,55.2L44.5,54.1L44.3,53.6L44.9,52.5L44.9,51.4L45.7,50.9L46.0,50.1L47.4,49.7L47.7,49.0L48.0,48.9L48.2,49.4L48.5,49.2L48.6,49.9L49.4,49.8L49.8,50.4L50.7,50.2L51.4,50.5L51.5,51.1L51.9,51.2L52.5,52.3L52.6,52.9L52.0,53.1L52.0,53.4L54.6,53.6L55.1,54.3L56.0,53.7L56.9,53.7L56.9,53.1L57.2,52.9L57.3,54.0L58.0,54.6L59.4,54.5L60.4,55.0L61.7,54.6L62.2,53.8L63.0,53.8L63.6,54.2L64.2,54.2L64.1,54.7L63.5,55.1L63.8,55.6L64.7,55.6L64.6,55.9L65.4,56.2L65.9,57.1L66.7,57.2L67.0,57.7L66.4,58.7L65.5,58.4L65.8,58.7L65.4,59.5L64.1,60.1L63.8,60.8L62.2,61.2L62.1,62.3L62.0,62.0L61.0,62.1L61.6,62.9L61.2,63.6L60.8,63.5L61.1,63.2L60.9,62.9L60.5,63.1L60.8,63.2L60.5,63.9L60.5,63.6L60.1,63.4L60.2,63.2L59.5,63.2L59.5,62.3L59.2,62.4L59.1,62.8L58.9,62.3L58.3,62.5L58.0,61.4L58.6,61.1L57.7,61.6L58.2,62.4L57.8,62.6L58.2,62.6L58.0,62.8L58.6,63.5L58.2,63.6L58.7,63.7L57.8,64.0L58.1,63.7L57.7,63.7L58.0,63.3L57.4,63.3L57.3,62.8L57.0,63.2L56.1,63.1Z", "제주특별자치도": "M34.1,91.0L34.1,91.5L34.4,92.0L34.6,91.6L34.7,92.0L34.4,92.1L34.6,92.5L34.3,92.4L34.2,93.1L33.7,93.5L33.2,94.6L32.3,94.6L31.8,95.1L30.6,95.2L29.8,95.9L28.7,95.8L28.0,96.1L27.8,95.8L27.1,95.7L25.6,96.0L25.5,96.5L25.0,96.6L23.7,95.2L23.6,94.1L25.7,91.8L28.3,90.9L30.3,90.6L30.4,90.3L30.8,90.5L32.2,90.1L33.0,90.2L33.2,90.6Z"}};
+const MY=[1985,1995,2005,2015,2025,2035,2045,2060];let mc="사과",sel=null;
+function shares(c){ // 연도별 비중(%) , 2035·2045는 추세 외삽
+ const s=ser(c),T=totals(c),out={};
+ D.regions.forEach(r=>{
+  const xs=[],ys=[];Y.forEach((y,i)=>{if(s[r][i]!=null&&T[i]){xs.push(y);ys.push(s[r][i]/T[i]*100)}});
+  const n=xs.length,last=n?ys[n-1]:0;let sl=0;
+  if(n>=2){const k=Math.min(n,4),x=xs.slice(-k),yv=ys.slice(-k),mx=x.reduce((a,b)=>a+b)/k,my=yv.reduce((a,b)=>a+b)/k;
+   sl=x.reduce((a,v,i)=>a+(v-mx)*(yv[i]-my),0)/x.reduce((a,v)=>a+(v-mx)**2,0)}
+  out[r]=MY.map((y,i)=>i<5?(s[r][i]!=null&&T[i]?s[r][i]/T[i]*100:null):Math.max(0,last+sl*(y-2025)));
+ });
+ [5,6,7].forEach(i=>{const sm=D.regions.reduce((a,r)=>a+out[r][i],0)||1;D.regions.forEach(r=>out[r][i]=out[r][i]/sm*100)});
+ return out}
+function drawMap(){
+ const svg=document.getElementById("mapsvg"),i=+document.getElementById("yr").value,S=shares(mc);
+ const vals=D.regions.map(r=>S[r][i]||0),mx=Math.max(...vals,1);
+ const col=v=>{const t=Math.sqrt(v/mx);const a=[22,38,44],b=[155,231,255];return`rgb(${a.map((x,j)=>Math.round(x+(b[j]-x)*t)).join(",")})`};
+ if(!svg.children.length){svg.innerHTML=D.regions.filter(r=>MAP.p[r]).map(r=>`<path data-r="${r}" d="${MAP.p[r]}"><title>${short(r)}</title></path>`).join("");
+  svg.querySelectorAll("path").forEach(p=>{const f=()=>{sel=p.dataset.r;tip()};p.onmouseenter=f;p.onclick=f})}
+ svg.querySelectorAll("path").forEach(p=>{const r=p.dataset.r,v=S[r][i];p.style.fill=v==null?"#1a1c1f":col(v);p.classList.toggle("sel",r===sel)});
+ const f=i>=5;
+ document.getElementById("mtitle").innerHTML=`${mc} 재배 비중 · ${MY[i]}년`+(f?'<span class="badge">예측 · 추세 외삽</span>':"");
+ document.getElementById("yrl").innerHTML=MY.map((y,j)=>`<span class="${j>=5?"f ":""}${j===i?"on":""}">${y}</span>`).join("");
+ document.getElementById("mleg").innerHTML=`<div class="bar"></div><div class="lb"><span>0%</span><span>${mx.toFixed(1)}%</span></div><span>색이 진할수록 전국 ${mc} 재배면적에서 차지하는 비중이 큽니다.</span>`;
+ const top=D.regions.slice().sort((a,b)=>(S[b][i]||0)-(S[a][i]||0))[0],t0=D.regions.slice().sort((a,b)=>(S[b][0]||0)-(S[a][0]||0))[0];
+ const gw=D.regions[0],d=(S[gw][i]||0)-(S[gw][0]||0);
+ document.getElementById("e10").textContent=`${MY[i]}년 ${mc} 비중이 가장 큰 곳은 ${short(top)} ${(S[top][i]||0).toFixed(1)}%입니다(1985년 ${short(t0)} ${(S[t0][0]||0).toFixed(1)}%). 강원은 1985년 대비 ${d>=0?"+":""}${d.toFixed(1)}%p입니다.`+(f?" 이 구간은 최근 4개 시점의 직선 추세를 연장한 값이며, 멀수록 불확실성이 큽니다(2060년은 특히 참고용).":"");
+ tip();
+}
+function tip(){const el=document.getElementById("mtip");if(!sel){return}const S=shares(mc),i=+document.getElementById("yr").value,v=S[sel][i],a=S[sel][0],ha=ser(mc)[sel][Math.min(i,4)];
+ el.innerHTML=`<b>${short(sel)}</b> · ${MY[i]}년<br>비중 ${v==null?"자료 없음":v.toFixed(1)+"%"}${a!=null?` (1985년 ${a.toFixed(1)}%)`:""}${i<5&&ha!=null?`<br>재배면적 ${nf(ha)}ha`:""}${i>=5?"<br>예측값(추세 외삽)":""}`;
+ document.querySelectorAll("#mapsvg path").forEach(p=>p.classList.toggle("sel",p.dataset.r===sel))}
+function mchips(){const el=document.getElementById("mchips");el.innerHTML="";["사과","배","복숭아","포도","감귤","감"].forEach(c=>{const b=document.createElement("button");b.className="chip"+(c===mc?" on":"");b.textContent=c;b.onclick=()=>{mc=c;mchips();drawMap()};el.appendChild(b)})}
+document.getElementById("yr").oninput=drawMap;mchips();drawMap();
+</script>
+</body>
+</html>

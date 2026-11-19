@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Polaris — 과수 재배지는 어디로 옮겨 가고 있을까</title>
+<meta name="description" content="1985–2025 시도별 과실 재배면적으로 보는 우리나라 과수 재배지의 변화와 예측">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Noto+Sans+KR:wght@300;400;500;700;900&family=Space+Grotesk:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+<script src="data.js"></script><script src="assets/map.js"></script><script src="assets/site.js"></script>
+</head>
+<body>
+<header id="hdr"></header>
+<main>
+<section class="hero"><div class="wrap">
+  <div>
+    <p class="eyebrow">Climate × Crop · Korea</p>
+    <h1>과수 재배지는<br><em>어디로</em> 옮겨 가고 있을까</h1>
+    <p class="lead">1985년부터 2025년까지 시도별 재배면적으로 변화를 보고, 2060년까지의 방향을 지도에서 확인하세요.</p>
+    <div class="acts"><a class="btn solid" href="map.html">지도로 보기 →</a><a class="btn" href="trend.html">변화 추이 보기</a></div>
+  </div>
+  <a class="pv" href="map.html" aria-label="지도 페이지로 이동">
+    <div class="cap"><span id="pvt">사과 재배 비중 · 2025</span><span>지도 열기 →</span></div>
+    <svg class="pvmap" id="pvmap" viewBox="0 0 92 100" role="img" aria-label="시도별 재배 비중 미리보기" style="width:100%;max-height:360px;background:#0C0E10;border-radius:10px"></svg>
+  </a>
+</div></section>
+
+<section class="kpis wrap" id="kpis" style="padding:0"></section>
+
+<section class="sec"><div class="wrap">
+  <h2>둘러보기</h2>
+  <p class="sub">궁금한 것부터 골라 들어가세요. 각 페이지에서 작물을 바꿔 볼 수 있습니다.</p>
+  <div class="nav4">
+    <a class="nc" href="trend.html"><span class="n">01</span><h3>변화 추이</h3><p>지역별 재배면적과 비중이 40년 동안 어떻게 달라졌는지 그래프로 봅니다.</p><span class="go">들어가기 →</span></a>
+    <a class="nc" href="map.html"><span class="n">02</span><h3>지도·예측</h3><p>슬라이더로 연도를 옮기며 시도별 변화를 보고 2060년까지 예측을 확인합니다.</p><span class="go">들어가기 →</span></a>
+    <a class="nc" href="analysis.html"><span class="n">03</span><h3>분석</h3><p>지역×시점 변화율과 위도별 변화처럼 변화의 크기와 방향을 더 자세히 봅니다.</p><span class="go">들어가기 →</span></a>
+    <a class="nc" href="about.html"><span class="n">04</span><h3>자료·방법</h3><p>어떤 자료로 어떻게 계산했는지, 한계는 무엇인지 확인합니다.</p><span class="go">들어가기 →</span></a>
+  </div>
+</div></section>
+
+<section class="sec"><div class="wrap">
+  <h2>이번 데이터에서 눈에 띄는 변화</h2>
+  <p class="sub">작물을 고르면 1985년 대비 2025년의 변화를 요약해 보여줍니다.</p>
+  <div class="chips" id="chips" role="group" aria-label="작물 선택" style="margin-bottom:20px"></div>
+  <div class="ins" id="ins"></div>
+  <div class="warn" style="margin:24px 0 0">현재 자료는 시도 단위라 시도 안에서 일어난 이동(예: 경북 내부)은 보이지 않습니다. 시군구 자료를 연결하면 더 정확해집니다.</div>
+</div></section>
+</main>
+<footer id="ftr"></footer>
+
+<script>
+PL.shell("index.html");
+const {D,Y,short,nf,ser,totals} = PL;
+function home(c){
+  const s=ser(c),T=totals(c),S=PL.shares(c);
+  PL.drawMap(document.getElementById("pvmap"),c,4,{});
+  document.getElementById("pvt").textContent=c+" 재배 비중 · 2025";
+  const rows=D.regions.map(r=>({r,a:S[r][0],b:S[r][4]})).filter(o=>o.a!=null&&o.b!=null);
+  rows.sort((x,y)=>(y.b-y.a)-(x.b-x.a));
+  const up=rows[0],dn=rows[rows.length-1];
+  const cl=D.centroid_lat[c].filter(v=>v!=null),dl=cl[cl.length-1]-cl[0];
+  const ch=((T[4]/T[0]-1)*100);
+  document.getElementById("ins").innerHTML=
+   `<div class="in"><small>비중이 가장 크게 오른 곳</small><b>${short(up.r)} +${(up.b-up.a).toFixed(1)}%p</b><p>${up.a.toFixed(1)}% → ${up.b.toFixed(1)}%</p></div>`+
+   `<div class="in"><small>비중이 가장 크게 줄어든 곳</small><b>${short(dn.r)} ${(dn.b-dn.a).toFixed(1)}%p</b><p>${dn.a.toFixed(1)}% → ${dn.b.toFixed(1)}%</p></div>`+
+   `<div class="in"><small>재배 중심 위도</small><b>${dl>=0?"북쪽":"남쪽"} ${Math.abs(dl).toFixed(2)}°</b><p>${cl[0].toFixed(2)}° → ${cl[cl.length-1].toFixed(2)}° (시도 단위 근사)</p></div>`;
+  document.getElementById("kpis").innerHTML=
+   [["40","년","1985–2025 조사"],[nf(T[4]),"ha","2025 "+c+" 전국 재배면적"],[(ch>=0?"+":"")+ch.toFixed(0),"%","1985년 대비 면적 변화"],["2060","","예측 범위(추세 외삽)"]]
+   .map(k=>`<div class="kpi"><b>${k[0]}<i>${k[1]}</i></b><span>${k[2]}</span></div>`).join("");
+}
+const c0=PL.getCrop();PL.chips(document.getElementById("chips"),c0,home);home(c0);
+</script>
+</body>
+</html>

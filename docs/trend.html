@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>변화 추이 — Polaris</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Noto+Sans+KR:wght@300;400;500;700;900&family=Space+Grotesk:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="data.js"></script><script src="assets/map.js"></script><script src="assets/site.js"></script>
+</head>
+<body>
+<header id="hdr"></header>
+<main class="wrap">
+<div class="crumb"><a href="index.html">홈</a> / 변화 추이</div>
+<div class="ph"><p class="eyebrow">Trend</p><h1>재배지는 이미 움직였다</h1><p>1985–2025년 5개 조사 시점의 시도별 과실 재배면적(ha)입니다. 작물을 고르면 모든 그래프가 바뀝니다.</p></div>
+<div class="chips" id="chips" role="group" aria-label="작물 선택" style="margin-bottom:24px"></div>
+
+<div class="card"><span class="no">GRAPH 01 · 선 그래프</span><h3>지역별 재배면적 추이</h3>
+<div class="grid2"><div class="box"><canvas id="c1" role="img" aria-label="지역별 재배면적 추이"></canvas></div><div class="exp"><b>그래프 설명</b><span id="e1"></span></div></div></div>
+
+<div class="card"><span class="no">GRAPH 02 · 막대 그래프</span><h3>비중이 커진 지역과 줄어든 지역</h3>
+<div class="grid2"><div class="box"><canvas id="c2" role="img" aria-label="1985년과 2025년 지역별 비중 비교"></canvas></div><div class="exp"><b>그래프 설명</b><span id="e2"></span></div></div></div>
+
+<div class="card"><span class="no">GRAPH 03 · 누적 막대</span><h3>시도별 비중의 변화</h3>
+<div class="grid2"><div class="box"><canvas id="c3" role="img" aria-label="시도별 비중 누적 막대"></canvas></div><div class="exp"><b>그래프 설명</b><span id="e3"></span></div></div></div>
+
+<div class="card"><span class="no">GRAPH 04 · 선 그래프</span><h3>재배 중심 위도의 이동</h3>
+<div class="grid2"><div class="box"><canvas id="c4" role="img" aria-label="면적 가중 평균 위도 추이"></canvas></div><div class="exp"><b>그래프 설명</b><span id="e4"></span></div></div></div>
+
+<div class="warn">시도 단위 통계라 경북 안에서의 이동 같은 시도 내부 변화는 보이지 않습니다.</div>
+<div class="next"><span style="color:var(--mut)">다음</span><a href="map.html">지도에서 변화와 예측 보기 →</a></div>
+</main>
+<footer id="ftr"></footer>
+<script>
+PL.shell("trend.html");PL.chartDefaults();
+const {D,Y,PAL,short,nf,ser,totals,mk,base}=PL;
+function render(crop){
+ const s=ser(crop),T=totals(crop);
+ const top=D.regions.slice().sort((a,b)=>(s[b][4]||0)-(s[a][4]||0)),show=top.slice(0,6);
+ mk("c1",{type:"line",data:{labels:Y,datasets:show.map((r,i)=>({label:short(r),data:s[r],borderColor:PAL[i],backgroundColor:PAL[i],tension:.25,spanGaps:true,pointRadius:3}))},options:{...base,scales:{y:{title:{display:true,text:"재배면적 (ha)"}}}}});
+ document.getElementById("e1").textContent=`${crop}: 2025년 재배면적이 가장 큰 곳은 ${short(top[0])} ${nf(s[top[0]][4])}ha입니다. 상위 6개 시도를 보여주며, 전국 합계는 1985년 ${nf(T[0])}ha에서 2025년 ${nf(T[4])}ha로 변했습니다.`;
+ const sh=(r,i)=>T[i]?(s[r][i]||0)/T[i]*100:0;
+ const diff=D.regions.map(r=>({r,a:sh(r,0),b:sh(r,4)})).filter(o=>o.a>0||o.b>0).sort((x,y)=>(y.b-y.a)-(x.b-x.a));
+ const pick=diff.slice(0,4).concat(diff.slice(-4)).filter((o,i,a)=>a.indexOf(o)===i);
+ mk("c2",{type:"bar",data:{labels:pick.map(o=>short(o.r)),datasets:[{label:"1985",data:pick.map(o=>+o.a.toFixed(1)),backgroundColor:"#3A4A50"},{label:"2025",data:pick.map(o=>+o.b.toFixed(1)),backgroundColor:"#9BE7FF"}]},options:{...base,scales:{y:{title:{display:true,text:"전국 대비 비중 (%)"}}}}});
+ const up=diff[0],dn=diff[diff.length-1];
+ document.getElementById("e2").textContent=`${crop}: 비중이 가장 크게 오른 곳은 ${short(up.r)}(${up.a.toFixed(1)}% → ${up.b.toFixed(1)}%), 가장 크게 줄어든 곳은 ${short(dn.r)}(${dn.a.toFixed(1)}% → ${dn.b.toFixed(1)}%)입니다.`;
+ const t5=top.slice(0,5),ds=t5.map((r,i)=>({label:short(r),data:Y.map((_,j)=>+sh(r,j).toFixed(1)),backgroundColor:PAL[i]}));
+ ds.push({label:"기타",data:Y.map((_,j)=>+(100-t5.reduce((a,r)=>a+sh(r,j),0)).toFixed(1)),backgroundColor:"#3A3C40"});
+ mk("c3",{type:"bar",data:{labels:Y,datasets:ds},options:{...base,scales:{x:{stacked:true},y:{stacked:true,max:100,title:{display:true,text:"비중 (%)"}}}}});
+ document.getElementById("e3").textContent=`${crop}: 상위 5개 시도(${t5.map(short).join("·")})와 나머지의 비중을 시점별로 쌓았습니다. 한 지역이 독점하는지, 여러 지역으로 퍼지는지 볼 수 있습니다.`;
+ const c=D.centroid_lat[crop],v=c.filter(x=>x!=null),dv=v[v.length-1]-v[0];
+ mk("c4",{type:"line",data:{labels:Y,datasets:[{label:crop+" 평균 위도",data:c,borderColor:"#9BE7FF",backgroundColor:"rgba(155,231,255,.15)",fill:true,tension:.2,spanGaps:true}]},options:{...base,scales:{y:{title:{display:true,text:"위도 (°N)"}}}}});
+ document.getElementById("e4").textContent=`${crop}: 재배 중심 위도는 ${v[0].toFixed(2)}°에서 ${v[v.length-1].toFixed(2)}°로 ${dv>=0?"북쪽":"남쪽"}으로 ${Math.abs(dv).toFixed(2)}° 움직였습니다. 시도 위도를 근사해 계산해서 작은 변화는 오차일 수 있습니다.`;
+}
+const c0=PL.getCrop();PL.chips(document.getElementById("chips"),c0,render);if(window.Chart)render(c0);
+</script>
+</body>
+</html>
