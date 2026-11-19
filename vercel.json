@@ -2,6 +2,5 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": null,
   "outputDirectory": "docs",
-  "cleanUrls": true,
-  "rewrites": [{ "source": "/", "destination": "/polaris.html" }]
+  "cleanUrls": true
 }

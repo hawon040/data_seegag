@@ -2,114 +2,73 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>과수 재배지 이동</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-<style>
-  :root { --bg:#fafaf7; --card:#fff; --ink:#1d2320; --mute:#6b7570; --line:#e3e6e1; --accent:#2f6f4e; }
-  @media (prefers-color-scheme: dark) {
-    :root { --bg:#141816; --card:#1c211e; --ink:#eaf0ec; --mute:#97a39c; --line:#2b332e; --accent:#6fcf9c; }
-  }
-  * { box-sizing:border-box; }
-  body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.55 -apple-system,"Pretendard","Noto Sans KR",sans-serif; }
-  main { max-width:960px; margin:0 auto; padding:20px 16px 48px; }
-  h1 { font-size:22px; margin:8px 0 2px; }
-  .sub { color:var(--mute); margin:0 0 18px; font-size:13px; }
-  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px; margin-bottom:14px; }
-  .card h2 { font-size:15px; margin:0 0 4px; }
-  .card p.note { color:var(--mute); font-size:12.5px; margin:2px 0 10px; }
-  .controls { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
-  .chip { border:1px solid var(--line); background:var(--card); color:var(--ink); padding:6px 12px; border-radius:999px; cursor:pointer; font-size:13px; }
-  .chip[aria-pressed="true"] { background:var(--accent); border-color:var(--accent); color:#fff; }
-  .kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-bottom:14px; }
-  .kpi { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 14px; }
-  .kpi b { display:block; font-size:22px; color:var(--accent); }
-  .kpi span { color:var(--mute); font-size:12px; }
-  .box { position:relative; height:340px; }
-  .warn { border-left:3px solid #c98a1b; padding:8px 12px; background:rgba(201,138,27,.1); font-size:12.5px; border-radius:6px; margin-top:10px; }
-  footer { color:var(--mute); font-size:12px; margin-top:18px; }
-</style>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Polaris — 과수 재배지는 어디로 옮겨 가고 있을까</title>
+<meta name="description" content="1985–2025 시도별 과실 재배면적으로 보는 우리나라 과수 재배지의 변화와 예측">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Noto+Sans+KR:wght@300;400;500;700;900&family=Space+Grotesk:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+<script src="data.js"></script><script src="assets/map.js"></script><script src="assets/site.js"></script>
 </head>
 <body>
+<header id="hdr"></header>
 <main>
-  <h1>과수 재배지는 어디로 움직였나</h1>
-  <p class="sub" id="src"></p>
+<section class="hero"><div class="wrap">
+  <div>
+    <p class="eyebrow">Climate × Crop · Korea</p>
+    <h1>과수 재배지는<br><em>어디로</em> 옮겨 가고 있을까</h1>
+    <p class="lead">1985년부터 2025년까지 시도별 재배면적으로 변화를 보고, 2060년까지의 방향을 지도에서 확인하세요.</p>
+    <div class="acts"><a class="btn solid" href="map.html">지도로 보기 →</a><a class="btn" href="trend.html">변화 추이 보기</a></div>
+  </div>
+  <a class="pv" href="map.html" aria-label="지도 페이지로 이동">
+    <div class="cap"><span id="pvt">사과 재배 비중 · 2025</span><span>지도 열기 →</span></div>
+    <svg class="pvmap" id="pvmap" viewBox="0 0 92 100" role="img" aria-label="시도별 재배 비중 미리보기" style="width:100%;max-height:360px;background:#0C0E10;border-radius:10px"></svg>
+  </a>
+</div></section>
 
-  <div class="controls" id="crops" role="group" aria-label="작물 선택"></div>
-  <div class="kpis" id="kpis"></div>
+<section class="kpis wrap" id="kpis" style="padding:0"></section>
 
-  <section class="card">
-    <h2>시도별 재배면적 추이 (ha)</h2>
-    <p class="note">범례를 눌러 지역을 켜고 끌 수 있습니다.</p>
-    <div class="box"><canvas id="line"></canvas></div>
-  </section>
+<section class="sec"><div class="wrap">
+  <h2>둘러보기</h2>
+  <p class="sub">궁금한 것부터 골라 들어가세요. 각 페이지에서 작물을 바꿔 볼 수 있습니다.</p>
+  <div class="nav4">
+    <a class="nc" href="trend.html"><span class="n">01</span><h3>변화 추이</h3><p>지역별 재배면적과 비중이 40년 동안 어떻게 달라졌는지 그래프로 봅니다.</p><span class="go">들어가기 →</span></a>
+    <a class="nc" href="map.html"><span class="n">02</span><h3>지도·예측</h3><p>슬라이더로 연도를 옮기며 시도별 변화를 보고 2060년까지 예측을 확인합니다.</p><span class="go">들어가기 →</span></a>
+    <a class="nc" href="analysis.html"><span class="n">03</span><h3>분석</h3><p>지역×시점 변화율과 위도별 변화처럼 변화의 크기와 방향을 더 자세히 봅니다.</p><span class="go">들어가기 →</span></a>
+    <a class="nc" href="about.html"><span class="n">04</span><h3>자료·방법</h3><p>어떤 자료로 어떻게 계산했는지, 한계는 무엇인지 확인합니다.</p><span class="go">들어가기 →</span></a>
+  </div>
+</div></section>
 
-  <section class="card">
-    <h2>전국 대비 지역 비중 (%)</h2>
-    <p class="note">연도별 재배면적 비중. 지역 간 이동이 있었는지 한눈에 봅니다.</p>
-    <div class="box"><canvas id="share"></canvas></div>
-  </section>
-
-  <section class="card">
-    <h2>재배면적 가중 평균 위도 (북상 지표)</h2>
-    <p class="note">시도별 대표 위도를 재배면적으로 가중 평균한 값. 오르면 북쪽으로 이동했다는 뜻입니다. 세로축이 좁게 확대되어 있어 실제 변화폭은 0.1° 안팎으로 작습니다.</p>
-    <div class="box"><canvas id="lat"></canvas></div>
-    <div class="warn">시도 단위·5개 시점 자료의 한계로, 경북 안에서 일어난 이동(대구→청송 등)은 이 지표에 잡히지 않습니다. 시군구별 자료로 보완해야 정확합니다.</div>
-  </section>
-
-  <footer>대표 위도는 시도 중심 부근의 근사값입니다. 단감·떫은감은 2005년부터, 매실은 2025년만 집계됩니다.</footer>
+<section class="sec"><div class="wrap">
+  <h2>이번 데이터에서 눈에 띄는 변화</h2>
+  <p class="sub">작물을 고르면 1985년 대비 2025년의 변화를 요약해 보여줍니다.</p>
+  <div class="chips" id="chips" role="group" aria-label="작물 선택" style="margin-bottom:20px"></div>
+  <div class="ins" id="ins"></div>
+  <div class="warn" style="margin:24px 0 0">현재 자료는 시도 단위라 시도 안에서 일어난 이동(예: 경북 내부)은 보이지 않습니다. 시군구 자료를 연결하면 더 정확해집니다.</div>
+</div></section>
 </main>
+<footer id="ftr"></footer>
 
-<script src="data.js"></script>
 <script>
-const D = window.FRUIT_DATA;
-const PALETTE = ["#2f6f4e","#d9822b","#3b6ea5","#b8434a","#7a5fa8","#4d9e9b","#a8913b","#8a8f87","#c26b9a","#5f7f3a","#a05a2c","#3d5a80","#9aa83b","#7d4b4b","#2e8b8b","#b06a2a","#6a6a9c"];
-const cs = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-let crop = "사과", charts = {};
-document.getElementById("src").textContent = D.source + " · " + D.years[0] + "–" + D.years.at(-1);
-
-const cropBox = document.getElementById("crops");
-D.crops.filter(c => c !== "기타").forEach(c => {
-  const b = document.createElement("button");
-  b.className = "chip"; b.textContent = c; b.setAttribute("aria-pressed", c === crop);
-  b.onclick = () => { crop = c; [...cropBox.children].forEach(x => x.setAttribute("aria-pressed", x.textContent === c)); render(); };
-  cropBox.appendChild(b);
-});
-
-const nf = n => n == null ? "-" : Math.round(n).toLocaleString("ko-KR");
-
-function render() {
-  const series = D.area[crop], regs = Object.keys(series);
-  const totals = D.years.map((_, i) => regs.reduce((s, r) => s + (series[r][i] || 0), 0));
-  const top = regs.slice().sort((a, b) => (series[b].at(-1) || 0) - (series[a].at(-1) || 0));
-  const gw = "강원특별자치도", gwShare = D.years.map((_, i) => totals[i] ? (series[gw]?.[i] || 0) / totals[i] * 100 : null);
-  const lat = D.centroid_lat[crop], first = lat.findIndex(v => v != null);
-
-  document.getElementById("kpis").innerHTML = [
-    ["최신 전국 재배면적", nf(totals.at(-1)) + " ha"],
-    ["최대 지역 (" + D.years.at(-1) + ")", top[0].replace(/특별자치도|특별자치시|특별시|광역시/, "") + " " + (totals.at(-1) ? (series[top[0]].at(-1) / totals.at(-1) * 100).toFixed(1) : 0) + "%"],
-    ["강원 비중 변화", gwShare[first] == null || !series[gw] ? "-" : gwShare[first].toFixed(1) + "% → " + gwShare.at(-1).toFixed(1) + "%"],
-    ["가중 위도 변화", lat[first] == null ? "-" : (lat.at(-1) - lat[first] >= 0 ? "+" : "") + (lat.at(-1) - lat[first]).toFixed(2) + "°"]
-  ].map(([k, v]) => `<div class="kpi"><b>${v}</b><span>${k}</span></div>`).join("");
-
-  Object.values(charts).forEach(c => c.destroy());
-  const grid = cs("--line"), ink = cs("--mute");
-  const base = { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:"bottom", labels:{ color:ink, boxWidth:10, font:{size:11} } } },
-                 scales:{ x:{ ticks:{color:ink}, grid:{color:grid} }, y:{ ticks:{color:ink}, grid:{color:grid} } } };
-
-  charts.line = new Chart("line", { type:"line", data:{ labels:D.years,
-    datasets: top.map((r, i) => ({ label:r.replace(/특별자치도|특별자치시|특별시|광역시/, ""), data:series[r], borderColor:PALETTE[i % PALETTE.length], backgroundColor:PALETTE[i % PALETTE.length], tension:.25, spanGaps:true, hidden:i >= 6, pointRadius:3 })) },
-    options:{ ...base, interaction:{ mode:"nearest", intersect:false } } });
-
-  charts.share = new Chart("share", { type:"bar", data:{ labels:D.years,
-    datasets: top.map((r, i) => ({ label:r.replace(/특별자치도|특별자치시|특별시|광역시/, ""), data:series[r].map((v, k) => totals[k] ? (v || 0) / totals[k] * 100 : 0), backgroundColor:PALETTE[i % PALETTE.length] })) },
-    options:{ ...base, scales:{ x:{ stacked:true, ticks:{color:ink}, grid:{color:grid} }, y:{ stacked:true, max:100, ticks:{ color:ink, callback:v => v + "%" }, grid:{color:grid} } } } });
-
-  charts.lat = new Chart("lat", { type:"line", data:{ labels:D.years,
-    datasets:[{ label:crop + " 가중 평균 위도(°N)", data:lat, borderColor:cs("--accent"), backgroundColor:cs("--accent"), tension:.25, spanGaps:false, pointRadius:4 }] },
-    options:{ ...base, scales:{ x:base.scales.x, y:{ ticks:{color:ink}, grid:{color:grid}, title:{ display:true, text:"위도", color:ink } } } } });
+PL.shell("index.html");
+const {D,Y,short,nf,ser,totals} = PL;
+function home(c){
+  const s=ser(c),T=totals(c),S=PL.shares(c);
+  PL.drawMap(document.getElementById("pvmap"),c,4,{});
+  document.getElementById("pvt").textContent=c+" 재배 비중 · 2025";
+  const rows=D.regions.map(r=>({r,a:S[r][0],b:S[r][4]})).filter(o=>o.a!=null&&o.b!=null);
+  rows.sort((x,y)=>(y.b-y.a)-(x.b-x.a));
+  const up=rows[0],dn=rows[rows.length-1];
+  const cl=D.centroid_lat[c].filter(v=>v!=null),dl=cl[cl.length-1]-cl[0];
+  const ch=((T[4]/T[0]-1)*100);
+  document.getElementById("ins").innerHTML=
+   `<div class="in"><small>비중이 가장 크게 오른 곳</small><b>${short(up.r)} +${(up.b-up.a).toFixed(1)}%p</b><p>${up.a.toFixed(1)}% → ${up.b.toFixed(1)}%</p></div>`+
+   `<div class="in"><small>비중이 가장 크게 줄어든 곳</small><b>${short(dn.r)} ${(dn.b-dn.a).toFixed(1)}%p</b><p>${dn.a.toFixed(1)}% → ${dn.b.toFixed(1)}%</p></div>`+
+   `<div class="in"><small>재배 중심 위도</small><b>${dl>=0?"북쪽":"남쪽"} ${Math.abs(dl).toFixed(2)}°</b><p>${cl[0].toFixed(2)}° → ${cl[cl.length-1].toFixed(2)}° (시도 단위 근사)</p></div>`;
+  document.getElementById("kpis").innerHTML=
+   [["40","년","1985–2025 조사"],[nf(T[4]),"ha","2025 "+c+" 전국 재배면적"],[(ch>=0?"+":"")+ch.toFixed(0),"%","1985년 대비 면적 변화"],["2060","","예측 범위(추세 외삽)"]]
+   .map(k=>`<div class="kpi"><b>${k[0]}<i>${k[1]}</i></b><span>${k[2]}</span></div>`).join("");
 }
-render();
+const c0=PL.getCrop();PL.chips(document.getElementById("chips"),c0,home);home(c0);
 </script>
 </body>
 </html>
